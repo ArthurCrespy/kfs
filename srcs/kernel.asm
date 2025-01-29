@@ -91,8 +91,7 @@ terminal_write:
     popa
     ret
 
-; IN = ESI: zero delimited string location
-; OUT = ECX: length of string
+; IN = ESI: zero delimited string location ; OUT = ECX: length of string
 terminal_strlen:
     push eax
     push esi
@@ -109,8 +108,7 @@ terminal_strlen:
     pop eax
     ret
 
-; IN = ESI: string location
-; OUT = none
+; IN = ESI: string location ; OUT = none
 terminal_write_string:
     pusha
     call terminal_strlen
@@ -118,7 +116,7 @@ terminal_write_string:
     popa
     ret
 
-hello_string db "42 - Hello World Kernel!", 0xA, 0 ; 0xA = line feed
+hello_string db "42 - Hello World Kernel!", 0xA, 0 ; 0xA: line feed
 
 terminal_color db 0
 
