@@ -3,7 +3,6 @@
 export DIR=/tmp/cross-compiler
 export PREFIX="$DIR/local"
 export SRC="$DIR/src"
-export PATH="$PREFIX/bin:$PATH"
 
 printf '\nThe following directory will be used :\n'
 printf '%s\n' "$DIR"
