@@ -1,11 +1,11 @@
 #!/bin/bash
 
-export DIR=$HOME/Documents/KFS/KFS-1/cross-compiler/
+export DIR=/tmp/cross-compiler
 export PREFIX="$DIR/local"
 export SRC="$DIR/src"
 export PATH="$PREFIX/bin:$PATH"
 
-printf 'The following directory will be used :\n'
+printf '\nThe following directory will be used :\n'
 printf '%s\n' "$DIR"
 while true; do
    read -r -p "Continue ? (y/n): " choice
@@ -90,5 +90,5 @@ cd texinfo-$TEXINFO_VERSION || exit
 make -j"$(nproc)"
 make install
 
-rm "$SRC"/*.xz "$SRC"/*.gz
-printf "Installed in %s\n\n" "$SRC"
+#rm "$SRC"/*
+printf '\n\nInstalled in %s\n\n' "$DIR"
