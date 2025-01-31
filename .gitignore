@@ -1,3 +1,2 @@
-cross-compiler/local/
-cross-compiler/src/
-cross-compiler/test.sh
+cross-compiler/*
+!cross-compiler/install_scripts/

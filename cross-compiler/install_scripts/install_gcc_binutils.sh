@@ -71,3 +71,18 @@ make install-target-libstdc++-v3
 
 #rm "$SRC"/*
 printf '\n\nInstalled in %s\n\n' "$DIR"
+
+export BIN_DIR=/home/lletourn/Documents/KFS/KFS-1/cross-compiler/
+
+printf "\Copy binaries to : \n%s\n" '%s\n' "$BIN_DIR"
+while true; do
+   read -r -p "Continue ? (y/n): " choice
+   case "$choice" in
+        y|Y ) break;;
+        n|N ) exit 0;;
+        * ) echo "";;
+    esac
+done
+
+mkdir -p $BIN_DIR
+cp -r /tmp/cross-compiler/local/* $BIN_DIR/
