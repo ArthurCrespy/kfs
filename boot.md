@@ -1,7 +1,9 @@
 ### Constant and Macros
 
     MBALIGN  equ  1 << 0
-align loaded modules on page boundaries.
+Ensures that any module loaded by the bootloader (e.g. the kernel or additional files) are aligned on page boundaries. *This simplifies paging and memory management, also more efficiency on certain CPUs and MMUs.*
+
+*In x86 architecture, memory is typically managed in pages, which are blocks of memory (commonly 4KB / 4096 bytes in size). A page boundary is a memory address that is divisible by the page size. For a 4KB page, this means addresses like 0x0000, 0x1000 (4096), 0x2000 (8192) etc.*
 
     MEMINFO  equ  1 << 1
 This constant enable the memory map (provides info about the memory layout of the system to the kernel).
@@ -21,7 +23,7 @@ Field used for error-checking.
 This section is where the multiboot header is defined. *The header is a special data structure that tells the bootloader info about the kernel.*
 
     align 4
-Ensures that the header is 4-bytes aligned, which is required by the multiboot specification.
+Ensures that the header is 4-bytes aligned, which is required by the multiboot specification. *In x86, most data types are 4 bytes in size, and the CPU can read and write memory faster when data is aligned due to its natural size.*
 
 	    dd MAGIC
 	    dd MBFLAGS
@@ -40,11 +42,13 @@ Defines uninitialized data. The stack for the kernel will be placed here, as it 
     align 16
 Ensures that the stack is 16-byte aligned, as required by the System V ABI for x86 systems.
 
+*Many modern CPUs fetch 16bytes at time from memory. If the stack is misaligned, function calls can be slower. Some calling conventions also require stack alignment to ensure that local variables and function arguments are correctly aligned.*
+
     stack_bottom:
 Label that marks the bottom of the stack.
 
     resb 16384
-Reserves 16KiB of space for the stack 
+Reserves 16KiB of space for the stack. *Aligns well with memory pages (4 * 4096)*
 
     stack_top;
 Label that marks the top of the stack, which will be used to initialize the ESP register.
@@ -57,7 +61,7 @@ Label that marks the top of the stack, which will be used to initialize the ESP 
 Contains the actual code that the kernel will run.
 
     global _start:function (_start.end - _start)
-Declares `_start` as a global symbol, making it the entry point for the kernel.
+Declares `_start` as a global symbol, making it the entry point for the kernel. *`(_start.end - start)` calculates the size of the function. This helps debugging tools recognize `_start` as a function and improves readability.*
 
 *The linker script specifies `_start` as the entry point of the kernel, and the bootloader will jump to this position once the kernel has been loaded. There is no return in the function because the bootloader will be gone at this point.*
 
