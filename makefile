@@ -16,4 +16,4 @@ i386-elf-gcc -T srcs/linker.ld -o KFS.bin -ffreestanding -O2 -nostdlib objs/boot
 # Building a bootable CD-ROM image
 # cp kfs.bin isodir/boot/grub
 # cp grub/grub.cfg isodir/boot/grub
-# grub-mkrescue -o kfs.iso isodir
+# grub-mkrescue -o kfs.iso --compress=xz isodir
