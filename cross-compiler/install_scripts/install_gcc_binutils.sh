@@ -85,7 +85,7 @@ done
 mkdir -p $BIN_DIR
 cp -r /tmp/cross-compiler/local/* $BIN_DIR/
 
-printf "Add GCC to PATH (via ~/.zshenv)? "
+printf "Add gcc, ld to PATH (via ~/.zshenv)? "
 while true; do
    read -r -p "(y/n): " choice
    case "$choice" in
@@ -96,6 +96,7 @@ while true; do
 done
 
 echo "export CX=$TARGET-gcc" >> ~/.zshenv
+echo "export LDX=$TARGET-ld" >> ~/.zshenv
 echo "export PATH="\"$BIN_DIR/bin:'$PATH'\""" >> ~/.zshenv
 
-printf "\n%s has been added to PATH (\$CX)\n\n" "$CX"
+printf "\n%s have been added to PATH (\$CX, \$LDX)\n\n" "$CX, $LDX"
