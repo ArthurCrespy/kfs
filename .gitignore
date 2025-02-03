@@ -1,3 +1,4 @@
 cross-compiler/*
 !cross-compiler/install_scripts/
 .vscode/
+objs/
