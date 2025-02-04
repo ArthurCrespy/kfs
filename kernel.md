@@ -1,3 +1,7 @@
+# Kernel code
+
+---
+
     enum vga_color {
     	VGA_COLOR_BLACK = 0,
     	VGA_COLOR_BLUE = 1,
@@ -16,12 +20,14 @@
     	VGA_COLOR_LIGHT_BROWN = 14,
     	VGA_COLOR_WHITE = 15,
     };
+
 Color constants for the VGA text mode. VGA stores foreground (text) and background (screen) colors as 4-bits values (0-15).
 
     static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) 
     {
     	return fg | bg << 4;
     }
+
 This function combines foreground and background colors into a single byte.
 
     static inline uint16_t vga_entry(unsigned char uc, uint8_t color) 
@@ -40,6 +46,7 @@ upper 8 bits (color) store the color.
     		len++;
     	return len;
     }
+
 Basic implementation of strlen(). *No standard library available.*
 
     static const size_t VGA_WIDTH = 80;
@@ -49,6 +56,7 @@ Basic implementation of strlen(). *No standard library available.*
     size_t terminal_column;
     uint8_t terminal_color;
     uint16_t* terminal_buffer;
+
 Text resolution, storing cursor position, and current text color. `terminal_buffer` points to the VGA memory where the text is stored.
 
     void terminal_initialize(void) 
@@ -64,6 +72,7 @@ Text resolution, storing cursor position, and current text color. `terminal_buff
     		}
     	}
     }
+
 Resets the screen by setting every character to `' '` (space) with a default color. The screen is cleared by looping over all cells in the VGA buffer.
 `terminal_buffer` is assigned to 0xB8000, which is the start of VGA text memory.
 
@@ -73,6 +82,7 @@ Resets the screen by setting every character to `' '` (space) with a default col
     {
     	terminal_color = color;
     }
+
 Pretty straightforward
 
     void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
@@ -80,6 +90,7 @@ Pretty straightforward
     	const size_t index = y * VGA_WIDTH + x;
     	terminal_buffer[index] = vga_entry(c, color);
     }
+
 Computes the index in the VGA buffer *`(y * VGA_WIDTH + x)`* and writes the character `c` of color `color` to VGA memory at this location.
 
     void terminal_putchar(char c) 
@@ -91,6 +102,7 @@ Computes the index in the VGA buffer *`(y * VGA_WIDTH + x)`* and writes the char
     			terminal_row = 0;
     	}
     }
+
 Prints a character at the current cursor position. If the column reaches the screen width, it moves to the next line. If the row reaches the screen height, it loops back to the top. *No scrolling support for now.*
 
     void terminal_write(const char* data, size_t size) 
@@ -104,6 +116,7 @@ Prints a raw array of characters.
     {
     	terminal_write(data, strlen(data));
     }
+
 Prints the string `data`.
 
     void kernel_main(void) 
@@ -112,8 +125,3 @@ Prints the string `data`.
 
     	terminal_writestring("Hello, kernel World!\n");
     }
-
-*The VGA text mode is deprecated on newer machines, and UEFI only supports pixel buffers. This will have to be changed later on for forward-compatibility.*
-
-- *Add scroll and cursor support*
-- *Add newline support*
