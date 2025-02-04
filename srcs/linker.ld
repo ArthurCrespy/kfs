@@ -4,7 +4,7 @@ ENTRY(_start)
 /* Tell where the various sections of the object files will be put in the final kernel image. */
 SECTIONS
 {
-	. = 1M;
+	. = 2M;
 
 	/* Put the multiboot header first */
 	.text BLOCK(4K) : ALIGN(4K)
@@ -28,6 +28,7 @@ SECTIONS
 	/* Read-write data (uninitialized) and stack */
 	.bss BLOCK(4K) : ALIGN(4K)
 	{
+		*(COMMON)
 		*(.bss)
 	}
 }
