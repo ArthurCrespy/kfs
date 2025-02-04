@@ -7,6 +7,7 @@ build:
 	i386-elf-gcc -T srcs/linker.ld -o srcs/kfs.bin objs/boot.o objs/kernel.o -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding
 	docker build -t kfs .
 	docker run --rm -d -p 8888:5900 kfs
+	sleep 0.1
 	vncviewer 0.0.0.0:8888
 
 build-ld:
