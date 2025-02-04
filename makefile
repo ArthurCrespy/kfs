@@ -12,6 +12,8 @@ i386-elf-ld -m elf_i386 -T srcs/linker.ld -o srcs/kfs.bin objs/boot.o objs/kerne
 docker build -t kfs .
 docker run --rm -d -p 8888:5900 kfs
 
+vncviewer localhost:8888 # Works in the terminal
+
 ### Test if multiboot is valid :
 #if grub-file --is-x86-multiboot myos.bin; then
 #  echo multiboot confirmed
