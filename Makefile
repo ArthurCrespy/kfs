@@ -9,6 +9,8 @@ build:
 	docker run --rm -d -p 8888:5900 kfs
 	sleep 0.1
 	vncviewer 0.0.0.0:8888
+	docker ps -aq --filter "ancestor=kfs" | xargs -r docker stop
+	docker ps -aq --filter "ancestor=kfs" | xargs -r docker rm
 
 build-ld:
 	mkdir -p objs
