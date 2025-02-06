@@ -82,19 +82,17 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 }
 
 void terminal_delete_last_line() {
-	int x;
-	uint16_t *ptr;
-	for(x = 0; x < VGA_WIDTH * 2; x++) {
-		ptr = 0xB8000 + (VGA_WIDTH * 2) * (VGA_HEIGHT - 1) + x;
-		*ptr = 0;
+	for (size_t x = 0; x < VGA_WIDTH; x++) {
+		const size_t index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;
+		terminal_buffer[index] = vga_entry(' ', terminal_color);
 	}
 }
 
 void terminal_scroll() {
     uint16_t *vga = VGA_MEMORY;
 
-    for (int y = 0; y < VGA_HEIGHT - 1; y++) {
-        for (int x = 0; x < VGA_WIDTH; x++) {
+    for (size_t y = 0; y < VGA_HEIGHT - 1; y++) {
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
             vga[y * VGA_WIDTH + x] = vga[(y + 1) * VGA_WIDTH + x];
         }
     }
@@ -161,7 +159,7 @@ void kernel_main(void)
 	terminal_writestring("12\n");
 	terminal_writestring("13\n");
 	terminal_writestring("14\n");
-	terminal_writestring("15\n");
-	terminal_writestring("16\n");
+	// terminal_writestring("15\n");
+	// terminal_writestring("16\n");
 
 }
