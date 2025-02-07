@@ -1,13 +1,14 @@
 NAME            = libk.a
 
 CC              = cc
-CFLAGS          = -Wall -Wextra -Werror -ffreestanding -O2 -g
+CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
 CPPFLAGS        = -D__is_libc -Iinclude -I../kernel/include
 LIBK_CFLAGS     = ${CFLAGS}
 LIBK_CPPFLAGS   = ${CPPFLAGS} -D__is_libk
 
 AR              = ar
 ARFLAGS         = rcs
+
 RM              = rm -rf
 
 BUILD_DIR       = build
@@ -20,36 +21,32 @@ SRCS            = stdio/printf.c \
                   string/memcpy.c \
                   string/memmove.c \
                   string/memset.c \
-                  string/strlen.c \
+                  string/strlen.c
 
-OBJS            = ${SRCS:%.c=${BUILD_DIR}/%.o}
+OBJS_DIR         = build/objs
+OBJS            = ${SRCS:%.c=${OBJS_DIR}/%.o}
 LIBK_OBJS       = ${OBJS:%.o=%.libk.o}
 
-all: ${BUILD_DIR} ${NAME}
+all: ${OBJS_DIR} ${NAME}
 
 ${NAME}: ${LIBK_OBJS}
-	${AR} ${ARFLAGS} ${NAME} ${LIBK_OBJS}
+	${AR} ${ARFLAGS} ${BUILD_DIR}/${NAME} ${LIBK_OBJS}
 
-${BUILD_DIR}:
-	mkdir -p ${BUILD_DIR}/stdio ${BUILD_DIR}/stdlib ${BUILD_DIR}/string
-
-${BUILD_DIR}/%.o: %.c | ${BUILD_DIR}
+${OBJS_DIR}/%.o: %.c | ${OBJS_DIR}
 	${CC} -MD -c $< -o $@ -std=gnu11 ${CFLAGS} ${CPPFLAGS}
 
-${BUILD_DIR}/%.libk.o: %.c | ${BUILD_DIR}
+${OBJS_DIR}/%.libk.o: %.c | ${OBJS_DIR}
 	${CC} -MD -c $< -o $@ -std=gnu11 ${LIBK_CFLAGS} ${LIBK_CPPFLAGS}
 
-install: install-headers install-libs
-
-install-headers:
-	mkdir -p ${DESTDIR}${INCLUDEDIR}
-	cp -R --preserve=timestamps include/. ${DESTDIR}${INCLUDEDIR}/.
-
-install-libs: ${NAME}
-	mkdir -p ${DESTDIR}${LIBDIR}
-	cp ${NAME} ${DESTDIR}${LIBDIR}
+${OBJS_DIR}:
+	mkdir -p ${OBJS_DIR}/stdio ${OBJS_DIR}/stdlib ${OBJS_DIR}/string
 
 clean:
-	${RM} ${NAME} ${BUILD_DIR}
+	${RM} ${OBJS_DIR}
 
-.PHONY: all clean install install-headers install-libs
+fclean: clean
+	${RM} ${BUILD_DIR}
+
+re: fclean all
+
+.PHONY: all clean fclean re
