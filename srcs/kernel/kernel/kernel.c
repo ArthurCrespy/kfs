@@ -4,6 +4,7 @@ not the C standard library.*/
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "kernel/ports.h"
 
 #if !defined(__i386__)
 #error "Not an i386-elf compiler"
@@ -100,6 +101,16 @@ void terminal_scroll() {
 	terminal_delete_last_line();
 }
 
+void terminal_update_cursor(void) {
+	uint16_t pos = terminal_row * VGA_WIDTH + terminal_column;
+
+	outb(0x3D4, 14);
+	outb(0x3D5, pos >> 8);
+
+	outb(0x3D4, 15);
+	outb(0x3D5, pos & 0xFF);
+}
+
 void terminal_putchar(char c) 
 {
 	if (c == '\n') {
@@ -117,6 +128,7 @@ void terminal_putchar(char c)
 		terminal_scroll();
 		terminal_row = VGA_HEIGHT - 1;
 	}
+	terminal_update_cursor();
 }
 
 void terminal_write(const char* data, size_t size) 
@@ -163,5 +175,5 @@ void kernel_main(void)
 	terminal_writestring("14\n");
 
 	terminal_setcolor(VGA_COLOR_GREEN);
-    printf("Hello 42\n");
+    printf("Hello 42");
 }
