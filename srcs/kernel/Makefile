@@ -6,43 +6,46 @@ CPPFLAGS        = -Iinclude -I../libc/include
 
 ASM             = nasm
 ASMFLAGS        = -felf32
+LIBK            = ../libc/build/libk.a
 
 LD              = i386-elf-gcc
 LDFLAGS         = -T arch/i386/linker.ld
 
 RM              = rm -rf
 
+C_SRCS          := $(shell find kernel -type f -name '*.c')
+KERNEL_SRCS     := $(shell find kernel -type f -name '*.asm')
+BOOT_SRCS		:= $(shell find arch -type f -name '*.asm')
+ASM_SRCS        := $(KERNEL_SRCS) $(BOOT_SRCS)
+
 BUILD_DIR       = build
+OBJS_DIR        = $(BUILD_DIR)/objs
+C_OBJS          := $(patsubst %.c, $(OBJS_DIR)/%.o, $(C_SRCS))
+KERNEL_OBJS     := $(patsubst %.asm, $(OBJS_DIR)/%.o, $(KERNEL_SRCS))
+BOOT_OBJS       := $(patsubst arch/%.asm, $(OBJS_DIR)/arch/%.o, $(BOOT_SRCS))
+OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
 
-C_SRCS          = kernel/kernel.c
-ASM_SRCS        = arch/i386/boot.asm \
-				  kernel/ports.asm
+all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
 
-OBJS_DIR        = build/objs
-C_OBJS          = ${OBJS_DIR}/kernel.o
-ASM_OBJS        = ${OBJS_DIR}/boot.o
+$(NAME): $(OBJS) $(LIBK)
+	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME)  $(OBJS) $(LIBK) $(CFLAGS)
 
-LIBK            = ../libc/build/libk.a
+$(OBJS_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-all: ${OBJS_DIR} ${NAME}
+$(OBJS_DIR)/%.o: %.asm
+	@mkdir -p $(dir $@)
+	$(ASM) $(ASMFLAGS) $< -o $@
 
-${NAME}: ${ASM_OBJS} ${C_OBJS} ${LIBK}
-	${LD} ${LDFLAGS} -o ${BUILD_DIR}/${NAME} ${ASM_OBJS} ${C_OBJS} ${LIBK} ${CFLAGS}
-
-${OBJS_DIR}/%.o: arch/i386/%.asm | ${OBJS_DIR}
-	${ASM} ${ASMFLAGS} $< -o $@
-
-${OBJS_DIR}/%.o: kernel/%.c | ${OBJS_DIR}
-	${CC} -c $< -o $@ ${CFLAGS} ${CPPFLAGS}
-
-${BUILD_DIR} ${OBJS_DIR}:
+$(BUILD_DIR) $(OBJS_DIR):
 	mkdir -p $@
 
 clean:
-	${RM} ${OBJS_DIR}
+	$(RM) $(OBJS_DIR)
 
 fclean: clean
-	${RM} ${BUILD_DIR}
+	$(RM) $(BUILD_DIR)
 
 re: fclean all
 
