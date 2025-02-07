@@ -6,3 +6,10 @@ isodir/
 
 kfs.bin
 kfs.iso
+
+cross-compiler/*
+!cross-compiler/tools
+
+objs/
+
+keyboard_example/

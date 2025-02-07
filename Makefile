@@ -8,6 +8,8 @@ all: kernel
 	docker run --rm -d -p $(DOCKER_PORT):5900 $(DOCKER_IMAGE)
 	sleep 0.1
 	vncviewer 0.0.0.0:$(DOCKER_PORT)
+	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
+	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker rm
 
 libk:
 	$(MAKE) -C $(MAKE_DIR)/libc
@@ -19,15 +21,17 @@ clean:
 	$(MAKE) -C $(MAKE_DIR)/libc clean
 	$(MAKE) -C $(MAKE_DIR)/kernel clean
 
-fclean:
-	$(MAKE) -C $(MAKE_DIR)/libc fclean
-	$(MAKE) -C $(MAKE_DIR)/kernel fclean
+clean_container:
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker rm
 
+fclean: clean_container
+	$(MAKE) -C $(MAKE_DIR)/libc fclean
+	$(MAKE) -C $(MAKE_DIR)/kernel fclean
+
 re: fclean all
 
-.PHONY: all libk kernel clean fclean re
+.PHONY: all libk kernel clean fclean re clean_container
 
 
 #i386-elf-gcc -T srcs/linker.ld -o srcs/kfs.bin -ffreestanding -O2 -nostdlib objs/boot.o objs/kernel.o -lgcc

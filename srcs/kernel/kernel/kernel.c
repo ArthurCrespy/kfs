@@ -1,10 +1,8 @@
-#include "kernel/kernel.h"
-#include "kernel/vga.h"
-#include "kernel/ports.h"
-
-#if !defined(__i386__)
-#error "Not an i386-elf compiler"
-#endif
+#include "../include/kernel/kernel.h"
+#include "../include/kernel/vga.h"
+#include "../include/kernel/ports.h"
+// #include "../include/kernel/keyboard.h"
+// #include "../include/kernel/idt.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -109,23 +107,7 @@ void kernel_main(void)
 	terminal_writestring("                             ###  ##########      \n");
 
     terminal_setcolor(VGA_COLOR_WHITE);
-	terminal_writestring("\n\nHello, kernel World!\nThis is a newlineeeeeeeee\n");
-
-	terminal_setcolor(VGA_COLOR_RED);
-	terminal_writestring("1\n");
-	terminal_writestring("2\n");
-	terminal_writestring("3\n");
-	terminal_writestring("4\n");
-	terminal_writestring("5\n");
-	terminal_writestring("6\n");
-	terminal_writestring("7\n");
-	terminal_writestring("8\n");
-	terminal_writestring("9\n");
-	terminal_writestring("10\n");
-	terminal_writestring("11\n");
-	terminal_writestring("12\n");
-	terminal_writestring("13\n");
-	terminal_writestring("14\n");
+	terminal_writestring("\n\nHello, kernel World!\n");
 
 	terminal_setcolor(VGA_COLOR_GREEN);
     printf("Hello 42");
