@@ -1,7 +1,8 @@
-cross-compiler/*
-!cross-compiler/install_scripts/
 .vscode/
-objs/
-KFS.bin
+.idea/
+
+build/
 isodir/
-kfs*
+
+kfs.bin
+kfs.iso
