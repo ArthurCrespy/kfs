@@ -2,7 +2,7 @@ NAME            = kfs.bin
 
 CC              = i386-elf-gcc
 CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
-CPPFLAGS        = -Iinclude
+CPPFLAGS        = -Iinclude -I../libc/include
 
 ASM             = nasm
 ASMFLAGS        = -felf32
@@ -21,10 +21,12 @@ OBJS_DIR        = build/objs
 C_OBJS          = ${OBJS_DIR}/kernel.o
 ASM_OBJS        = ${OBJS_DIR}/boot.o
 
+LIBK            = ../libc/build/libk.a
+
 all: ${OBJS_DIR} ${NAME}
 
-${NAME}: ${ASM_OBJS} ${C_OBJS}
-	${LD} ${LDFLAGS} -o ${BUILD_DIR}/${NAME} ${ASM_OBJS} ${C_OBJS} ${CFLAGS}
+${NAME}: ${ASM_OBJS} ${C_OBJS} ${LIBK}
+	${LD} ${LDFLAGS} -o ${BUILD_DIR}/${NAME} ${ASM_OBJS} ${C_OBJS} ${LIBK} ${CFLAGS}
 
 ${OBJS_DIR}/%.o: arch/i386/%.asm | ${OBJS_DIR}
 	${ASM} ${ASMFLAGS} $< -o $@

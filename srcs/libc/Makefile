@@ -1,12 +1,13 @@
 NAME            = libk.a
 
-CC              = cc
+CC              = i386-elf-gcc
 CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
 CPPFLAGS        = -D__is_libc -Iinclude -I../kernel/include
+
 LIBK_CFLAGS     = ${CFLAGS}
 LIBK_CPPFLAGS   = ${CPPFLAGS} -D__is_libk
 
-AR              = ar
+AR              = i386-elf-ar
 ARFLAGS         = rcs
 
 RM              = rm -rf
