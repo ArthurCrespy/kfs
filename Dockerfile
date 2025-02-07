@@ -4,8 +4,8 @@ RUN apk update && apk add qemu-system-i386 grub xorriso grub-bios mtools build-b
 
 RUN mkdir -p /kfs/isodir/boot/grub
 
-COPY srcs/kfs.bin /kfs/isodir/boot/grub
-COPY srcs/grub.cfg /kfs/isodir/boot/grub
+COPY srcs/kernel/build/kfs.bin /kfs/isodir/boot/grub
+COPY srcs/kernel/arch/i386/grub.cfg /kfs/isodir/boot/grub
 
 RUN grub-mkrescue -o /kfs/kfs.iso --compress=xz /kfs/isodir
 
