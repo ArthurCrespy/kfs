@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DIR=/tmp/cross-compiler
+export DIR=~/kfs/cross-compiler/build
 export PREFIX="$DIR/local"
 export SRC="$DIR/src"
 
@@ -32,7 +32,11 @@ wget https://gmplib.org/download/gmp/gmp-$GMP_VERSION.tar.xz
 tar -xf gmp-$GMP_VERSION.tar.xz
 cd gmp-$GMP_VERSION || exit
 ./configure --prefix="$PREFIX" --enable-cxx
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"&
+fi
 make install
 
 #MPFR
@@ -41,7 +45,11 @@ wget https://www.mpfr.org/mpfr-current/mpfr-$MPFR_VERSION.tar.xz
 tar -xf mpfr-$MPFR_VERSION.tar.xz
 cd mpfr-$MPFR_VERSION || exit
 ./configure --prefix="$PREFIX" --with-gmp="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #MPC
@@ -50,7 +58,11 @@ wget https://ftp.gnu.org/gnu/mpc/mpc-$MPC_VERSION.tar.gz
 tar -xf mpc-$MPC_VERSION.tar.gz
 cd mpc-$MPC_VERSION || exit
 ./configure --prefix="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #ISL
@@ -59,7 +71,11 @@ wget https://libisl.sourceforge.io/isl-$ISL_VERSION.tar.xz
 tar -xf isl-$ISL_VERSION.tar.xz
 cd isl-$ISL_VERSION || exit
 ./configure --prefix="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #BISON
@@ -68,7 +84,11 @@ wget http://ftp.gnu.org/gnu/bison/bison-$BISON_VERSION.tar.xz
 tar -xf bison-$BISON_VERSION.tar.xz
 cd bison-$BISON_VERSION || exit
 ./configure --prefix="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #FLEX
@@ -77,7 +97,11 @@ wget https://github.com/westes/flex/releases/download/v$FLEX_VERSION/flex-$FLEX_
 tar -xf flex-$FLEX_VERSION.tar.gz
 cd flex-$FLEX_VERSION || exit
 ./configure --prefix="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #TEXINFO
@@ -86,7 +110,11 @@ wget http://ftp.gnu.org/gnu/texinfo/texinfo-$TEXINFO_VERSION.tar.xz
 tar -xf texinfo-$TEXINFO_VERSION.tar.xz
 cd texinfo-$TEXINFO_VERSION || exit
 ./configure --prefix="$PREFIX"
-make -j"$(nproc)"
+if [[ "$(uname)" == "Linux" ]]; then
+    make -j"$(nproc)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    make -j"$(sysctl -n hw.physicalcpu)"
+fi
 make install
 
 #rm "$SRC"/*
