@@ -3,6 +3,7 @@ not the C standard library.*/
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #if !defined(__i386__)
 #error "Not an i386-elf compiler"
@@ -132,7 +133,6 @@ void terminal_writestring(const char* data)
 void kernel_main(void) 
 {
 	terminal_initialize();
-		// terminal_putentryat('x', terminal_color, 20, terminal_row);
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -142,8 +142,10 @@ void kernel_main(void)
 	terminal_writestring("                         +#+#+#+#+#+  +#+         \n");
 	terminal_writestring("                              #+#   #+#           \n");
 	terminal_writestring("                             ###  ##########      \n");
+
     terminal_setcolor(VGA_COLOR_WHITE);
 	terminal_writestring("\n\nHello, kernel World!\nThis is a newlineeeeeeeee\n");
+
 	terminal_setcolor(VGA_COLOR_RED);
 	terminal_writestring("1\n");
 	terminal_writestring("2\n");
@@ -159,7 +161,7 @@ void kernel_main(void)
 	terminal_writestring("12\n");
 	terminal_writestring("13\n");
 	terminal_writestring("14\n");
-	// terminal_writestring("15\n");
-	// terminal_writestring("16\n");
 
+	terminal_setcolor(VGA_COLOR_GREEN);
+    printf("Hello 42\n");
 }
