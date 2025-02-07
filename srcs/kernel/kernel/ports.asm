@@ -25,7 +25,7 @@ inw:
     mov     ebp, esp
     mov     dx, [ebp+8]     ; load port number from the stack into DX (temporary 16 bit register)
     in      ax, dx          ; read a word from the port specified in DX and store it to AX (AX is the lower 16 bits of EAX)
-    movzx   eax, ax         ; 8 to 32 bit zero extension into EAX which is the return register
+    movzx   eax, ax         ; 16 to 32 bit zero extension into EAX which is the return register
     pop     ebp
     ret
 
