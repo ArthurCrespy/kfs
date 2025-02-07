@@ -15,7 +15,8 @@ RM              = rm -rf
 BUILD_DIR       = build
 
 C_SRCS          = kernel/kernel.c
-ASM_SRCS        = arch/i386/boot.asm
+ASM_SRCS        = arch/i386/boot.asm \
+				  kernel/ports.asm
 
 OBJS_DIR        = build/objs
 C_OBJS          = ${OBJS_DIR}/kernel.o
