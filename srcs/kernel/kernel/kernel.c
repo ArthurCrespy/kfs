@@ -1,8 +1,7 @@
 #include "../include/kernel/kernel.h"
 #include "../include/kernel/vga.h"
 #include "../include/kernel/ports.h"
-// #include "../include/kernel/keyboard.h"
-// #include "../include/kernel/idt.h"
+#include "../include/kernel/keyboard.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -95,7 +94,14 @@ void terminal_writestring(const char* data)
 
 void kernel_main(void) 
 {
+
 	terminal_initialize();
+    keyboard_install();
+
+    if (!keyboard_self_test())
+        printf("Keyboard failed self test\n");
+    else
+        printf("Keyboard passed self test\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -110,5 +116,5 @@ void kernel_main(void)
 	terminal_writestring("\n\nHello, kernel World!\n");
 
 	terminal_setcolor(VGA_COLOR_GREEN);
-    printf("Hello 42");
+    printf("Hello 42\n");
 }

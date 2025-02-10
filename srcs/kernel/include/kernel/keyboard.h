@@ -54,10 +54,13 @@ Status Register:
 #ifndef _KEYBOARD_H
 #define _KEYBOARD_H
 
+#include <stddef.h>
+#include <stdint.h>
 #include <stdbool.h>
-// #include <ctype.h>
 
-#include "keymap.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 enum KEYBOARD_ENCODER_IO {
 	KB_ENC_INPUT_BUFFER = 0x60,
@@ -111,5 +114,7 @@ void	keyboard_enable();
 
 // resset system
 void	keyboard_reset_system();
+
+void    keyboard_install();
 
 #endif
