@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export DIR=~/kfs/cross-compiler/build
+export DIR=~/goinfre/.kfs
 export PREFIX="$DIR/local"
 export SRC="$DIR/src"
-export BIN_DIR=~/kfs/cross-compiler/kfs
+export BIN_DIR=~/sgoinfre/.kfs
 
 printf '\nThe following directory will be used :\n'
 printf '%s\n' "$DIR"

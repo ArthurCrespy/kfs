@@ -28,7 +28,7 @@ OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
 all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
 
 $(NAME): $(OBJS) $(LIBK)
-	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME)  $(OBJS) $(LIBK) $(CFLAGS)
+	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS)
 
 $(OBJS_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
