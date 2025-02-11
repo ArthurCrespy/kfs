@@ -126,7 +126,7 @@ void kernel_main(void)
 
 	printf("OK <- CPU still running\n");
 
-	test_irq_32();
+	// test_irq_32();
 
-	printf("OK <- CPU still running\n");
+	// printf("OK <- CPU still running\n");
 }
