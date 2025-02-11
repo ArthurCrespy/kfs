@@ -32,7 +32,6 @@ static bool _ctrl		= false;
 // set if keyboard is disabled
 bool _keyboard_disable = true;
 
-
 static int _keyboard_scancode_std [] = {
 	//! key			scancode
 	KEY_UNKNOWN,	//0
@@ -120,7 +119,6 @@ static int _keyboard_scancode_std [] = {
 	KEY_F12			//0x58
 };
 
-
 int isascii(int c) {
 	return (c >= 0 && c <= 127);
 }
@@ -167,152 +165,6 @@ void	keyboard_encoder_send_command(uint8_t cmd) {
 	outb(KB_ENC_CMD_REGISTER, cmd);
 }
 
-// interrupt handler
-// void __attribute__((cdecl)) i86_keyboard_irq () {
-
-// 	asm volatile ("add esp, 12");
-// 	asm volatile ("pushad");
-// 	asm volatile ("cli");
-
-// 	static bool _extended = false;
-
-// 	int code = 0;
-
-// 	//! read scan code only if the kkybrd controller output buffer is full (scan code is in it)
-// 	if (keyboard_controller_read_status () & KB_CTRL_STATUS_MASK_OUT_BUFFER) {
-
-// 		//! read the scan code
-// 		code = keyboard_encoder_read_buffer ();
-
-// 		if (code < 0x80) {
-// 			char ascii = keyboard_key_to_ascii((enum KEYCODE)_keyboard_scancode_std[code]);
-// 			if (ascii)
-// 				terminal_putchar(ascii);
-// 		}
-// 	}
-// 	// send EOI signal to the PIC at port 0x20
-// 	outb(0x20, 0x20);
-
-// 	// return from interrupt handler
-// 	asm volatile ("sti");
-// 	asm volatile ("popad");
-// 	asm volatile ("iretd");
-// }
-
-// enum KEYCODE keyboard_get_last_key () {
-
-// 	return (_scancode!=INVALID_SCANCODE) ? ((enum KEYCODE)_keyboard_scancode_std [_scancode]) : (KEY_UNKNOWN);
-// }
-
-// // discards last scan
-// void	keyboard_discard_last_key() {
-// 	_scancode = INVALID_SCANCODE;
-// }
-
-// char keyboard_key_to_ascii (enum KEYCODE code) {
-
-// 	uint8_t key = code;
-
-// 	//! insure key is an ascii character
-// 	if (isascii (key)) {
-
-// 		//! if shift key is down or caps lock is on, make the key uppercase
-// 		if (_shift || _capslock)
-// 			if (key >= 'a' && key <= 'z')
-// 				key -= 32;
-
-// 		if (_shift && !_capslock)
-// 			if (key >= '0' && key <= '9')
-// 				switch (key) {
-
-// 					case '0':
-// 						key = KEY_RIGHTPARENTHESIS;
-// 						break;
-// 					case '1':
-// 						key = KEY_EXCLAMATION;
-// 						break;
-// 					case '2':
-// 						key = KEY_AT;
-// 						break;
-// 					case '3':
-// 						key = KEY_EXCLAMATION;
-// 						break;
-// 					case '4':
-// 						key = KEY_HASH;
-// 						break;
-// 					case '5':
-// 						key = KEY_PERCENT;
-// 						break;
-// 					case '6':
-// 						key = KEY_CARRET;
-// 						break;
-// 					case '7':
-// 						key = KEY_AMPERSAND;
-// 						break;
-// 					case '8':
-// 						key = KEY_ASTERISK;
-// 						break;
-// 					case '9':
-// 						key = KEY_LEFTPARENTHESIS;
-// 						break;
-// 				}
-// 			else {
-
-// 				switch (key) {
-// 					case KEY_COMMA:
-// 						key = KEY_LESS;
-// 						break;
-
-// 					case KEY_DOT:
-// 						key = KEY_GREATER;
-// 						break;
-
-// 					case KEY_SLASH:
-// 						key = KEY_QUESTION;
-// 						break;
-
-// 					case KEY_SEMICOLON:
-// 						key = KEY_COLON;
-// 						break;
-
-// 					case KEY_QUOTE:
-// 						key = KEY_QUOTEDOUBLE;
-// 						break;
-
-// 					case KEY_LEFTBRACKET :
-// 						key = KEY_LEFTCURL;
-// 						break;
-
-// 					case KEY_RIGHTBRACKET :
-// 						key = KEY_RIGHTCURL;
-// 						break;
-
-// 					case KEY_GRAVE:
-// 						key = KEY_TILDE;
-// 						break;
-
-// 					case KEY_MINUS:
-// 						key = KEY_UNDERSCORE;
-// 						break;
-
-// 					case KEY_PLUS:
-// 						key = KEY_EQUAL;
-// 						break;
-
-// 					case KEY_BACKSLASH:
-// 						key = KEY_BAR;
-// 						break;
-// 				}
-// 			}
-
-// 		//! return the key
-// 		return key;
-// 	}
-
-// 	//! scan code != a valid ascii char so no conversion is possible
-// 	return 0;
-// }
-
 bool	keyboard_self_test() {
 	keyboard_controller_send_command(KB_CTRL_CMD_SELF_TEST);
 	while (1)
@@ -337,9 +189,7 @@ void	keyboard_reset_system() {
 	keyboard_encoder_send_command(0xfe);
 }
 
-
 void	i86_keyboard_irq() {
-	printf("IRQ -> i86 called\n");
 	uint8_t scancode = keyboard_encoder_read_buffer();
 
 	bool key_released = (scancode & 0x80) != 0;
@@ -378,11 +228,10 @@ void	i86_keyboard_irq() {
 	}
 }
 
-
 extern void keyboard_irq_wrapper(void);
 
 void keyboard_install(void) {
-	setvect(0x09, keyboard_irq_wrapper);
+	setvect(0x20, keyboard_irq_wrapper);
 
 	_scancode	= INVALID_SCANCODE;
 	_numlock	= false;
