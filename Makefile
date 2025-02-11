@@ -33,11 +33,7 @@ re: fclean all
 
 .PHONY: all libk kernel clean fclean re clean_container
 
-
-#i386-elf-gcc -T srcs/linker.ld -o srcs/kfs.bin -ffreestanding -O2 -nostdlib objs/boot.o objs/kernel.o -lgcc
-# gcc instead of ld (ld prevents the compiler from performing various tasks during linking)
 #i386-elf-ld -m elf_i386 -T srcs/linker.ld -o srcs/kfs.bin objs/boot.o objs/kernel.o
-# ld instead of gcc (make a separate rule if correcteur is un peu tatillon)
 
 # Test if multiboot is valid :
 #if grub-file --is-x86-multiboot myos.bin; then
