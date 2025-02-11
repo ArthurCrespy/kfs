@@ -8,6 +8,7 @@
 #include "stdlib.h"
 #include "string.h"
 
+void terminal_load_screen(int new_screen);
 void terminal_initialize(void);
 void terminal_putchar(char c);
 void terminal_write(const char* data, size_t size);

@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "../../include/kernel/kernel.h"
+#include "../../include/kernel/vga.h"
 #include "../../include/kernel/keyboard.h"
 #include "../../include/kernel/ports.h"
 
@@ -20,6 +22,7 @@ char scancode_to_ascii_shifted[] = {
 };
 
 int shift_pressed = 0;
+int alt_pressed = 0;
 
 static int keyboard_has_data() {
 	return inb(PORT_STATUS) & 1;
@@ -39,6 +42,14 @@ char get_ascii_from_scancode(uint8_t scancode) {
 		shift_pressed = 0;
 		return 0;
 	}
+	if (scancode == 0x38) {
+		alt_pressed = 1;
+		return 0;
+	}
+	if (scancode == 0xB8) {
+		alt_pressed = 0;
+		return 0;
+	}
 
 	if (scancode > 0x39) return 0; // Ignore unknown keys
 
@@ -49,7 +60,13 @@ char get_ascii_from_scancode(uint8_t scancode) {
 void keyboard_poll_loop() {
 	while (1) {
 		uint8_t scancode = get_scancode();
-		char c = get_ascii_from_scancode(scancode);
-		if (c) printf("%c", c);
+		if (alt_pressed && scancode >= 0x02 && scancode < NUM_SCREEN + 0x02) {
+			int screen_num = scancode - 0x02; // convert scancode to screen index
+			terminal_load_screen(screen_num);
+		}
+		else {
+			char c = get_ascii_from_scancode(scancode);
+			if (c) printf("%c", c);
+		}
 	}
 }

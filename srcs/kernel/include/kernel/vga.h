@@ -4,10 +4,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define NUM_SCREEN 2
+
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 
 static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
+
+extern int current_screen;
 
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
