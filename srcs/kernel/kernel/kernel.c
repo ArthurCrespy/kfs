@@ -2,6 +2,8 @@
 #include "../include/kernel/vga.h"
 #include "../include/kernel/ports.h"
 #include "../include/kernel/keyboard.h"
+#include "../include/kernel/idt.h"
+#include "../include/kernel/gdt.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -94,10 +96,12 @@ void terminal_writestring(const char* data)
 
 void kernel_main(void) 
 {
+	gdt_init();
+	idt_init();
 
 	terminal_initialize();
-    keyboard_install();
 
+	keyboard_install();
     if (!keyboard_self_test())
         printf("Keyboard failed self test\n");
     else
