@@ -13,6 +13,16 @@ uint16_t *vga = VGA_MEMORY;
 
 int current_screen = 0;
 
+void terminal_update_cursor(void) {
+	uint16_t pos = terminal_row[current_screen] * VGA_WIDTH + terminal_column[current_screen];
+
+	outb(0x3D4, 14);
+	outb(0x3D5, pos >> 8);
+
+	outb(0x3D4, 15);
+	outb(0x3D5, pos & 0xFF);
+}
+
 void terminal_sync_with_vga() {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
 		VGA_MEMORY[i] = terminal_buffer[current_screen][i];
@@ -25,6 +35,7 @@ void terminal_load_screen(int new_screen) {
 
 	current_screen = new_screen;
 
+	terminal_update_cursor();
 	terminal_sync_with_vga();
 }
 
@@ -67,16 +78,6 @@ void terminal_scroll() {
 		}
 	}
 	terminal_delete_last_line();
-}
-
-void terminal_update_cursor(void) {
-	uint16_t pos = terminal_row[current_screen] * VGA_WIDTH + terminal_column[current_screen];
-
-	outb(0x3D4, 14);
-	outb(0x3D5, pos >> 8);
-
-	outb(0x3D4, 15);
-	outb(0x3D5, pos & 0xFF);
 }
 
 void terminal_putchar(char c) {
