@@ -101,11 +101,11 @@ void kernel_main(void)
 
 	terminal_initialize();
 
-	keyboard_install();
-    if (!keyboard_self_test())
-        printf("Keyboard failed self test\n");
-    else
-        printf("Keyboard passed self test\n");
+	keyboard_init();
+	if (!keyboard_self_test())
+		printf("Keyboard failed self test\n");
+	else
+		printf("Keyboard passed self test\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -116,9 +116,9 @@ void kernel_main(void)
 	terminal_writestring("                              #+#   #+#           \n");
 	terminal_writestring("                             ###  ##########      \n");
 
-    terminal_setcolor(VGA_COLOR_WHITE);
+	terminal_setcolor(VGA_COLOR_WHITE);
 	terminal_writestring("\n\nHello, kernel World!\n");
 
 	terminal_setcolor(VGA_COLOR_GREEN);
-    printf("Hello 42\n");
+	printf("Hello 42\n");
 }

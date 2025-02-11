@@ -1,10 +1,10 @@
-global keyboard_irq_wrapper
-extern i86_keyboard_irq
+global keyboard_i86_irq_asm
+extern keyboard_i86_irq
 
 section .text
-keyboard_irq_wrapper:
+keyboard_i86_irq_asm:
 	pusha						; Save all general purpose registers
-	call i86_keyboard_irq		; Call the C handler
+	call keyboard_i86_irq		; Call the C handler
 	popa						; Restore registers
 
 								; Send EOI to the PIC

@@ -2,10 +2,7 @@
 #define _KEYMAP_H
 
 enum KEYCODE {
-
 // Alphanumeric keys ////////////////
-
-	KEY_SPACE             = ' ',
 	KEY_0                 = '0',
 	KEY_1                 = '1',
 	KEY_2                 = '2',
@@ -44,19 +41,18 @@ enum KEYCODE {
 	KEY_Y                 = 'y',
 	KEY_Z                 = 'z',
 
+	KEY_SPACE             = ' ',
 	KEY_RETURN            = '\r',
 	KEY_ESCAPE            = 0x1001,
 	KEY_BACKSPACE         = '\b',
 
 // Arrow keys ////////////////////////
-
 	KEY_UP                = 0x1100,
 	KEY_DOWN              = 0x1101,
 	KEY_LEFT              = 0x1102,
 	KEY_RIGHT             = 0x1103,
 
 // Function keys /////////////////////
-
 	KEY_F1                = 0x1201,
 	KEY_F2                = 0x1202,
 	KEY_F3                = 0x1203,
@@ -98,7 +94,7 @@ enum KEYCODE {
 	KEY_LEFTCURL          = '{',
 	KEY_RIGHTCURL         = '}',
 	KEY_DOLLAR            = '$',
-	// KEY_POUND             = '�',
+//	KEY_POUND             = '�',
 	KEY_EURO              = '$',
 	KEY_LESS              = '<',
 	KEY_GREATER           = '>',
@@ -109,7 +105,6 @@ enum KEYCODE {
 	KEY_CARRET            = '^',
 
 // Numeric keypad //////////////////////
-
 	KEY_KP_0              = '0',
 	KEY_KP_1              = '1',
 	KEY_KP_2              = '2',
@@ -125,14 +120,13 @@ enum KEYCODE {
 	KEY_KP_DECIMAL        = '.',
 	KEY_KP_DIVIDE         = '/',
 	KEY_KP_ASTERISK       = '*',
+
 	KEY_KP_NUMLOCK        = 0x300f,
 	KEY_KP_ENTER          = 0x3010,
 
+// Modify keys ////////////////////////////
 	KEY_TAB               = 0x4000,
 	KEY_CAPSLOCK          = 0x4001,
-
-// Modify keys ////////////////////////////
-
 	KEY_LSHIFT            = 0x4002,
 	KEY_LCTRL             = 0x4003,
 	KEY_LALT              = 0x4004,

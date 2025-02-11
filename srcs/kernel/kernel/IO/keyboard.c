@@ -119,6 +119,7 @@ static int _keyboard_scancode_std [] = {
 	KEY_F12			//0x58
 };
 
+//TODO: Move these functions to the libk
 int isascii(int c) {
 	return (c >= 0 && c <= 127);
 }
@@ -141,11 +142,11 @@ char keyboard_key_to_ascii(enum KEYCODE code) {
 	return 0;
 }
 
-uint8_t	keyboard_controller_read_status() {
+uint8_t keyboard_controller_read_status() {
 	return inb(KB_CTRL_STATUS_REGISTER);
 }
 
-void	keyboard_controller_send_command(uint8_t cmd) {
+void keyboard_controller_send_command(uint8_t cmd) {
 	// Wait for keyboard controller's input buffer to be clear
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
@@ -153,11 +154,11 @@ void	keyboard_controller_send_command(uint8_t cmd) {
 	outb(KB_CTRL_CMD_REGISTER, cmd);
 }
 
-uint8_t	keyboard_encoder_read_buffer() {
+uint8_t keyboard_encoder_read_buffer() {
 	return inb(KB_ENC_INPUT_BUFFER);
 }
 
-void	keyboard_encoder_send_command(uint8_t cmd) {
+void keyboard_encoder_send_command(uint8_t cmd) {
 	// Wait for keyboard controller's input buffer to be clear
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
@@ -165,7 +166,7 @@ void	keyboard_encoder_send_command(uint8_t cmd) {
 	outb(KB_ENC_CMD_REGISTER, cmd);
 }
 
-bool	keyboard_self_test() {
+bool keyboard_self_test() {
 	keyboard_controller_send_command(KB_CTRL_CMD_SELF_TEST);
 	while (1)
 		if (keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_OUT_BUFFER)
@@ -173,23 +174,23 @@ bool	keyboard_self_test() {
 	return (keyboard_encoder_read_buffer() == 0x55) ? true : false;
 }
 
-void	keyboard_disable() {
+void keyboard_disable() {
 	keyboard_controller_send_command(KB_CTRL_CMD_DISABLE);
 	_keyboard_disable = true;
 }
 
-void	keyboard_enable() {
+void keyboard_enable() {
 	keyboard_controller_send_command(KB_CTRL_CMD_ENABLE);
 	_keyboard_disable = false;
 }
 
-void	keyboard_reset_system() {
+void keyboard_reset_system() {
 	// writes 11111110 to the output port
 	keyboard_controller_send_command(KB_CTRL_CMD_WRITE_OUT_PORT);
 	keyboard_encoder_send_command(0xfe);
 }
 
-void	i86_keyboard_irq() {
+void keyboard_i86_irq() {
 	uint8_t scancode = keyboard_encoder_read_buffer();
 
 	bool key_released = (scancode & 0x80) != 0;
@@ -214,7 +215,7 @@ void	i86_keyboard_irq() {
 		case KEY_CAPSLOCK:
 			if (!key_released) {
 				_capslock = !_capslock;
-				// LED Status
+				// LED logic
 			}
 		break;
 
@@ -226,12 +227,14 @@ void	i86_keyboard_irq() {
 			}
 		break;
 	}
+	outb(0x20, 0x20);
 }
 
-extern void keyboard_irq_wrapper(void);
+extern void keyboard_i86_irq_asm(void);
 
-void keyboard_install(void) {
-	setvect(0x20, keyboard_irq_wrapper);
+void keyboard_init(void) {
+	setvect(0x20, keyboard_i86_irq);
+//	setvect(0x20, keyboard_i86_irq_asm);
 
 	_scancode	= INVALID_SCANCODE;
 	_numlock	= false;
