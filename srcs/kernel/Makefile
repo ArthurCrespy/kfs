@@ -8,6 +8,9 @@ ASM             = nasm
 ASMFLAGS        = -felf32
 LIBK            = ../libc/build/libk.a
 
+DISASM		  	= ndisasm
+DISASMFLAGS	  	= -b 32
+
 LD              = i386-elf-gcc
 LDFLAGS         = -T arch/i386/linker.ld
 
@@ -29,6 +32,7 @@ all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
 
 $(NAME): $(OBJS) $(LIBK)
 	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS)
+	$(DISASM) $(DISASMFLAGS) $(BUILD_DIR)/$(NAME) > $(BUILD_DIR)/$(NAME).disasm
 
 $(OBJS_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
@@ -43,6 +47,7 @@ $(BUILD_DIR) $(OBJS_DIR):
 
 clean:
 	$(RM) $(OBJS_DIR)
+	$(RM) $(BUILD_DIR)/$(NAME).disasm
 
 fclean: clean
 	$(RM) $(BUILD_DIR)
