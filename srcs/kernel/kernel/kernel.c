@@ -1,7 +1,7 @@
 #include "../include/kernel/kernel.h"
 #include "../include/kernel/vga.h"
 #include "../include/kernel/ports.h"
-// #include "../include/kernel/keyboard.h"
+#include "../include/kernel/keyboard.h"
 // #include "../include/kernel/idt.h"
 
 size_t terminal_row;
@@ -98,17 +98,15 @@ void kernel_main(void)
 	terminal_initialize();
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
-	terminal_writestring("                                 :::     :::::::: \n");
-	terminal_writestring("                               :+:     :+:    :+: \n");
-	terminal_writestring("                             +:+ +:+        +:+   \n");
-	terminal_writestring("                           +#+  +:+      +#+      \n");
-	terminal_writestring("                         +#+#+#+#+#+  +#+         \n");
-	terminal_writestring("                              #+#   #+#           \n");
-	terminal_writestring("                             ###  ##########      \n");
-
-    terminal_setcolor(VGA_COLOR_WHITE);
-	terminal_writestring("\n\nHello, kernel World!\n");
+	printf("                                 :::     :::::::: \n");
+	printf("                               :+:     :+:    :+: \n");
+	printf("                             +:+ +:+        +:+   \n");
+	printf("                           +#+  +:+      +#+      \n");
+	printf("                         +#+#+#+#+#+  +#+         \n");
+	printf("                              #+#   #+#           \n");
+	printf("                             ###  ##########      \n");
 
 	terminal_setcolor(VGA_COLOR_GREEN);
-    printf("Hello 42");
+	printf("Hello 42\n");
+	keyboard_poll_loop();
 }
