@@ -1,3 +1,4 @@
+#include "../../include/kernel/kernel.h"
 #include "../../include/kernel/keyboard.h"
 #include "../../include/kernel/keymap.h"
 #include "../../include/kernel/idt.h"
@@ -129,7 +130,6 @@ int isprint(int c) {
 }
 
 char keyboard_key_to_ascii(enum KEYCODE code) {
-  	printf("IRQ -> %d\n", code);
 	char key = (char) code;
 
 	if (isascii(key) && isprint(key)) {
@@ -190,6 +190,29 @@ void keyboard_reset_system() {
 	keyboard_encoder_send_command(0xfe);
 }
 
+void keyboard_pic_remap(void) {
+	uint8_t a1;
+	uint8_t a2;
+
+	a1 = inb(0x21);
+	a2 = inb(0xA1);
+
+	outb(0x20, 0x11);
+	outb(0xA0, 0x11);
+
+	outb(0x21, 0x20);
+	outb(0xA1, 0x28);
+
+	outb(0x21, 0x04);
+	outb(0xA1, 0x02);
+
+	outb(0x21, 0x01);
+	outb(0xA1, 0x01);
+
+	outb(0x21, a1);
+	outb(0xA1, a2);
+}
+
 void keyboard_i86_irq() {
 	uint8_t scancode = keyboard_encoder_read_buffer();
 
@@ -197,6 +220,8 @@ void keyboard_i86_irq() {
 	uint8_t key_index = scancode & 0x7F;
 
 	enum KEYCODE key = _keyboard_scancode_std[key_index];
+
+	printf("OK <- C IRQ 32\n");
 
 	switch (key) {
 		case KEY_LSHIFT:
@@ -223,7 +248,7 @@ void keyboard_i86_irq() {
 			if (!key_released) {
 				char ascii = keyboard_key_to_ascii(key);
 				if (ascii)
-					printf("IRQ -> %c", ascii);
+					terminal_putchar(ascii);
 			}
 		break;
 	}
@@ -233,6 +258,8 @@ void keyboard_i86_irq() {
 extern void keyboard_i86_irq_asm(void);
 
 void keyboard_init(void) {
+	keyboard_pic_remap();
+
 	setvect(0x20, keyboard_i86_irq);
 //	setvect(0x20, keyboard_i86_irq_asm);
 
@@ -244,9 +271,11 @@ void keyboard_init(void) {
 	_alt		= false;
 	_ctrl		= false;
 
-	if (!keyboard_self_test()) {
-		printf("Keyboard failed self test");
-	}
+	if (!keyboard_self_test())
+		printf("KO <- KB Test\n");
+	else
+		printf("OK <- KB Test\n");
+
 
 	keyboard_enable();
 }

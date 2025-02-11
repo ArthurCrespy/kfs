@@ -6,8 +6,9 @@
 
 #include "stdio.h"
 
-extern void osdev_test1_asm();
+extern void test_irq_49_asm();
 
-void osdev_test1(void);
+void test_irq_49(void);
+void test_irq_32(void);
 
 #endif

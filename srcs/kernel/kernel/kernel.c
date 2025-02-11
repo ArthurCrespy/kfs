@@ -102,13 +102,9 @@ void kernel_main(void)
 
 	terminal_initialize();
 
-	printf("xx <- ASM IRQ 49 handled\n");
+	printf("KO <- ASM IRQ 49\n");
 
 	keyboard_init();
-	if (!keyboard_self_test())
-		printf("KO <- KB Test\n");
-	else
-		printf("OK <- KB Test\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -120,11 +116,17 @@ void kernel_main(void)
 	terminal_writestring("                             ###  ##########      \n");
 
 	terminal_setcolor(VGA_COLOR_WHITE);
-	terminal_writestring("\n\nHello, kernel World!\n");
-	printf("Hello 42\n\n");
+	terminal_writestring("\n\nHello ");
+	printf("world 42 kernel!\n\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_GREY);
 
-	osdev_test1();
-	osdev_test1_asm();
+	test_irq_49();
+	// test_irq_49_asm();
+
+	printf("OK <- CPU still running\n");
+
+	test_irq_32();
+
+	printf("OK <- CPU still running\n");
 }

@@ -27,7 +27,7 @@ void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t 
 }
 
 void gdt_init(void) {
-	setentry(0, 0, 0, 0, 0);			// 0: Null segment
+	setentry(0, 0, 0, 0, 0);				// 0: Null segment
 	setentry(1, 0, 0xFFFFF, 0x9A, 0xCF);	// 1: Kernel code segment
 	setentry(2, 0, 0xFFFFF, 0x92, 0xCF);	// 2: Kernel data segment
 	gdt_load();
