@@ -94,6 +94,8 @@ void terminal_writestring(const char* data)
 	terminal_write(data, strlen(data));
 }
 
+extern void osdev_test1();
+
 void kernel_main(void) 
 {
 	gdt_init();
@@ -103,9 +105,9 @@ void kernel_main(void)
 
 	keyboard_init();
 	if (!keyboard_self_test())
-		printf("Keyboard failed self test\n");
+		printf("		<- IRQ Test | KB Test -> KO\n");
 	else
-		printf("Keyboard passed self test\n");
+		printf("		<- IRQ Test | KB Test -> OK\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -121,4 +123,6 @@ void kernel_main(void)
 
 	terminal_setcolor(VGA_COLOR_GREEN);
 	printf("Hello 42\n");
+
+	osdev_test1();
 }
