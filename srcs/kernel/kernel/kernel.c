@@ -4,6 +4,7 @@
 #include "../include/kernel/keyboard.h"
 #include "../include/kernel/idt.h"
 #include "../include/kernel/gdt.h"
+#include "../include/kernel/tests.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -94,8 +95,6 @@ void terminal_writestring(const char* data)
 	terminal_write(data, strlen(data));
 }
 
-extern void osdev_test1();
-
 void kernel_main(void) 
 {
 	gdt_init();
@@ -103,11 +102,13 @@ void kernel_main(void)
 
 	terminal_initialize();
 
+	printf("xx <- ASM IRQ 49 handled\n");
+
 	keyboard_init();
 	if (!keyboard_self_test())
-		printf("		<- IRQ Test | KB Test -> KO\n");
+		printf("KO <- KB Test\n");
 	else
-		printf("		<- IRQ Test | KB Test -> OK\n");
+		printf("OK <- KB Test\n");
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
@@ -120,9 +121,10 @@ void kernel_main(void)
 
 	terminal_setcolor(VGA_COLOR_WHITE);
 	terminal_writestring("\n\nHello, kernel World!\n");
+	printf("Hello 42\n\n");
 
-	terminal_setcolor(VGA_COLOR_GREEN);
-	printf("Hello 42\n");
+	terminal_setcolor(VGA_COLOR_LIGHT_GREY);
 
 	osdev_test1();
+	osdev_test1_asm();
 }
