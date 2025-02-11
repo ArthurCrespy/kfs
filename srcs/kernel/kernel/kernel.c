@@ -127,6 +127,7 @@ void kernel_main(void)
 	printf("OK <- CPU still running\n");
 
 	// test_irq_32();
+	__asm__ __volatile__("int $32");
 
-	// printf("OK <- CPU still running\n");
+	printf("OK <- CPU still running\n");
 }
