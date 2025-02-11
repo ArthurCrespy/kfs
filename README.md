@@ -1,4 +1,5 @@
-# kfs-1
-Grub, boot and screen
+# kfs
+
+Kernel from Scratch
 
 ---
