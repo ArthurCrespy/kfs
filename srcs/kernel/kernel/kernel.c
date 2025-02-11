@@ -3,14 +3,10 @@
 #include "../include/kernel/ports.h"
 #include "../include/kernel/keyboard.h"
 
-
 size_t terminal_row[NUM_SCREEN];
 size_t terminal_column[NUM_SCREEN];
 uint8_t terminal_color[NUM_SCREEN];
 static uint16_t terminal_buffer[NUM_SCREEN][VGA_WIDTH * VGA_HEIGHT];
-
-uint16_t *vga = VGA_MEMORY;
-
 int current_screen = 0;
 
 void terminal_update_cursor(void) {
@@ -109,18 +105,20 @@ void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
 }
 
+void print_ascii_art(void){
+	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
+	terminal_writestring("                                 :::     :::::::: \n");
+	terminal_writestring("                               :+:     :+:    :+: \n");
+	terminal_writestring("                             +:+ +:+        +:+   \n");
+	terminal_writestring("                           +#+  +:+      +#+      \n");
+	terminal_writestring("                         +#+#+#+#+#+  +#+         \n");
+	terminal_writestring("                              #+#   #+#           \n");
+	terminal_writestring("                             ###  ##########      \n");
+}
+
 void kernel_main(void) {
 	terminal_initialize();
-
-	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
-	printf("                                 :::     :::::::: \n");
-	printf("                               :+:     :+:    :+: \n");
-	printf("                             +:+ +:+        +:+   \n");
-	printf("                           +#+  +:+      +#+      \n");
-	printf("                         +#+#+#+#+#+  +#+         \n");
-	printf("                              #+#   #+#           \n");
-	printf("                             ###  ##########      \n");
-
+	print_ascii_art();
 	terminal_setcolor(VGA_COLOR_LIGHT_GREY);
 	keyboard_poll_loop();
 }

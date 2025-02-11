@@ -1,11 +1,9 @@
 #ifndef _VGA_H
 #define _VGA_H
 
-#include <stddef.h>
 #include <stdint.h>
 
-#define NUM_SCREEN 2
-
+#define NUM_SCREEN 3
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 

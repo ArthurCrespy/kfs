@@ -6,5 +6,4 @@
 
 void keyboard_poll_loop();
 
-
 #endif

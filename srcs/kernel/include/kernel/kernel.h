@@ -1,7 +1,6 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
-#include <stddef.h>
 #include <stdint.h>
 
 #include "stdio.h"
