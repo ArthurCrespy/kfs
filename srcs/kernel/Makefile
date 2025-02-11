@@ -20,21 +20,21 @@ ASM_SRCS        := $(KERNEL_SRCS) $(BOOT_SRCS)
 
 BUILD_DIR       = build
 OBJS_DIR        = $(BUILD_DIR)/objs
-C_OBJS          := $(patsubst %.c, $(OBJS_DIR)/%.o, $(C_SRCS))
-KERNEL_OBJS     := $(patsubst %.asm, $(OBJS_DIR)/%.o, $(KERNEL_SRCS))
-BOOT_OBJS       := $(patsubst arch/%.asm, $(OBJS_DIR)/arch/%.o, $(BOOT_SRCS))
+C_OBJS          := $(patsubst %.c, $(OBJS_DIR)/%.c.o, $(C_SRCS))
+KERNEL_OBJS     := $(patsubst %.asm, $(OBJS_DIR)/%.asm.o, $(KERNEL_SRCS))
+BOOT_OBJS       := $(patsubst arch/%.asm, $(OBJS_DIR)/arch/%.asm.o, $(BOOT_SRCS))
 OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
 
 all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
 
 $(NAME): $(OBJS) $(LIBK)
-	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME)  $(OBJS) $(LIBK) $(CFLAGS)
+	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS)
 
-$(OBJS_DIR)/%.o: %.c
+$(OBJS_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(OBJS_DIR)/%.o: %.asm
+$(OBJS_DIR)/%.asm.o: %.asm
 	@mkdir -p $(dir $@)
 	$(ASM) $(ASMFLAGS) $< -o $@
 
