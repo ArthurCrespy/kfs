@@ -2,6 +2,8 @@ NAME            = kfs.bin
 
 CC              = i386-elf-gcc
 CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
+CFLAGS_CUSTOM   = -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding
+
 CPPFLAGS        = -Iinclude -I../libc/include
 
 ASM             = nasm
@@ -9,6 +11,7 @@ ASMFLAGS        = -felf32
 LIBK            = ../libc/build/libk.a
 
 LD              = i386-elf-gcc
+LD_CUSTOM       = i386-elf-ld
 LDFLAGS         = -T arch/i386/linker.ld
 
 RM              = rm -rf
@@ -27,8 +30,13 @@ OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
 
 all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
 
+custom: $(BUILD_DIR) $(OBJS_DIR) $(NAME)_ld
+
 $(NAME): $(OBJS) $(LIBK)
 	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS)
+
+$(NAME)_ld: $(OBJS) $(LIBK)
+	$(LD_CUSTOM) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS_CUSTOM)
 
 $(OBJS_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
