@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DIR=~/kfs/cross-compiler/build
+export DIR=~/goinfre/.kfs
 export PREFIX="$DIR/local"
 export SRC="$DIR/src"
 
