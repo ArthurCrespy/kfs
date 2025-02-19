@@ -2,8 +2,8 @@
 
 void kernel_main(void) 
 {
-  	terminal_init();
-    pic_init();
+	terminal_init();
+	pic_init();
 	gdt_init();
 	idt_init();
 	interrupts_init();
@@ -23,5 +23,6 @@ void kernel_main(void)
 
 	terminal_setcolor(VGA_COLOR_LIGHT_RED);
 
-	while (1);
+	for(;;)
+		asm("hlt");
 }
