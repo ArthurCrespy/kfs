@@ -6,10 +6,13 @@
 #include <ports.h>
 #include <terminal.h>
 
+#include <ctype.h>
 #include <stdio.h>
 
 #include <stdbool.h>
 #include <stdint.h>
+
+#define INVALID_SCANCODE 0
 
 enum KEYBOARD_ENCODER_IO {
 	KB_ENC_INPUT_BUFFER	= 0x60,

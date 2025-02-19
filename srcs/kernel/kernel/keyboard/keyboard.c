@@ -1,32 +1,18 @@
 #include <keyboard.h>
 
-#define INVALID_SCANCODE 0
-
 static char _scancode = INVALID_SCANCODE;
 
-// lock keys
 static bool _numlock	= false;
 static bool _scrolllock	= false;
 static bool _capslock	= false;
-
-// shift, alt, and ctrl keys current state
 static bool _shift		= false;
 static bool _alt		= false;
 static bool _ctrl		= false;
 
-// // set if keyboard error
 // static int _keyboard_error = 0;
-
-// // set if the Basic Assurance Test (BAT) failed
 // static bool _keyboard_bat_res = false;
-
-// // set if diagnostics failed
 // static bool _keyboard_diag_res = false;
-
-// // set if system should resend last command
 // static bool _keyboard_resend_res = false;
-
-// set if keyboard is disabled
 bool _keyboard_disable = true;
 
 static int _keyboard_scancode_std [] = {
@@ -134,7 +120,6 @@ uint8_t keyboard_controller_read_status() {
 }
 
 void keyboard_controller_send_command(uint8_t cmd) {
-	// Wait for keyboard controller's input buffer to be clear
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
 			break;
@@ -146,7 +131,6 @@ uint8_t keyboard_encoder_read_buffer() {
 }
 
 void keyboard_encoder_send_command(uint8_t cmd) {
-	// Wait for keyboard controller's input buffer to be clear
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
 			break;
@@ -172,16 +156,9 @@ void keyboard_enable() {
 }
 
 void keyboard_reset_system() {
-	// writes 11111110 to the output port
 	keyboard_controller_send_command(KB_CTRL_CMD_WRITE_OUT_PORT);
 	keyboard_encoder_send_command(0xfe);
 }
-
-#define MPIC1_CMD	0x20
-#define MPIC1_DATA	0x21
-#define SPIC1_CMD	0xA0
-#define SPIC1_DATA	0xA1
-
 
 void keyboard_i86_irq() {
 	uint8_t scancode = keyboard_encoder_read_buffer();
