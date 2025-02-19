@@ -5,7 +5,7 @@ CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nod
 CPPFLAGS        = -Iinclude -I../libc/include
 
 ASM             = nasm
-ASMFLAGS        = -felf32
+ASMFLAGS        = -f elf32 -F dwarf -g
 LIBK            = ../libc/build/libk.a
 
 DISASM		  	= ndisasm
