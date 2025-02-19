@@ -116,15 +116,6 @@ static int _keyboard_scancode_std [] = {
 	KEY_F12			//0x58
 };
 
-//TODO: Move these functions to the libk
-int isascii(int c) {
-	return (c >= 0 && c <= 127);
-}
-
-int isprint(int c) {
-	return (c >= 32 && c <= 126);
-}
-
 char keyboard_key_to_ascii(enum KEYCODE code) {
 	char key = (char) code;
 
