@@ -10,7 +10,6 @@ all: kernel
 	sleep 0.1
 	vncviewer 0.0.0.0:$(DOCKER_PORT)
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
-	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker rm
 
 custom: kernel_custom
 	docker build -t $(DOCKER_IMAGE) .
@@ -18,7 +17,6 @@ custom: kernel_custom
 	sleep 0.1
 	vncviewer 0.0.0.0:$(DOCKER_PORT)
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
-	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker rm
 
 libk:
 	$(MAKE) -C $(MAKE_DIR)/libc
@@ -35,7 +33,6 @@ clean:
 
 clean_container:
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
-	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker rm
 
 fclean: clean_container
 	$(MAKE) -C $(MAKE_DIR)/libc fclean
