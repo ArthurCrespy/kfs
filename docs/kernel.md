@@ -59,7 +59,7 @@ Basic implementation of strlen(). *No standard library available.*
 
 Text resolution, storing cursor position, and current text color. `terminal_buffer` points to the VGA memory where the text is stored.
 
-    void terminal_initialize(void) 
+    void terminal_init(void) 
     {
     	terminal_row = 0;
     	terminal_column = 0;
@@ -121,7 +121,7 @@ Prints the string `data`.
 
     void kernel_main(void) 
     {
-    	terminal_initialize();
+    	terminal_init();
 
     	terminal_writestring("Hello, kernel World!\n");
     }

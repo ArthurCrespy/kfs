@@ -1,0 +1,49 @@
+// Ports used for communication in ix86 architecture
+//
+// 				  | PORT  |  READ/WRITE | DESCRIPTION        |
+// 				  | ######################################## |
+// Keyboard Encoder  | 0x60  |  Read       | Read input buffer  |
+// 				  | 0x60  |  Write      | Send command       |
+// 				  |-------|-------------|--------------------|
+// Onboard keyboard  | 0x64  |  Read       | Status register    |
+// controller        | 0x64  |  Write      | Send command       |
+//
+//
+// Status Register:
+// 	Bit 0: Output buffer status
+// 		0: Empty (don't read yet)
+// 		1: Full (can be read)
+//
+// 	Bit 1: Input buffer status
+// 		0: Empty (can be written)
+// 		1: Full (don't write)
+//
+// 	Bit 2: System flag
+// 		0: set after power on reset
+// 		1: Set after successful completion of kb controller's self test (Basic Assurance Test / BAT)
+//
+// 	Bit 3: Command data
+// 		0: Last write to input buffer was data (via 0x60)
+// 		1: Last write to input buffer was a command (via 0x64)
+//
+// 	Bit 4: Keyboard locked
+// 		0: Locked
+// 		1: Not locked
+//
+// 	Bit 5: Auxiliary output buffer full
+// 		PS/2 Systems :
+// 			0: Determines if read from port 0x60 is valid. If valid, 0=Keyboard data
+// 			1: Mouse data, only if port 0x60 is readable
+// 		AT Systems:
+// 			0: OK flag
+// 			1: Timeout on transmission from controller to keyboard (possibly no keyboard present)
+//
+// 	Bit 6: Timeout
+// 		0: OK flag
+// 		1: Timeout
+// 		PS/2: General timeout
+// 		AT: Timeout on transmission from keyboard to controller (possibly parity error -> bits 6 and 7 are set)
+//
+// 	Bit 7: Parity error
+// 		0: OK flag (no error)
+// 		1: Parity error with last byte

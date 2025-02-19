@@ -2,10 +2,11 @@ MAKE_DIR		= srcs
 
 DOCKER_IMAGE    = kfs
 DOCKER_PORT     = 8888
+DOCKER_GDB      = 1234
 
 all: kernel
 	docker build -t $(DOCKER_IMAGE) .
-	docker run --rm -d -p $(DOCKER_PORT):5900 $(DOCKER_IMAGE)
+	docker run --rm -d -p $(DOCKER_PORT):5900 -p $(DOCKER_GDB):1234 $(DOCKER_IMAGE)
 	sleep 0.1
 	vncviewer 0.0.0.0:$(DOCKER_PORT)
 	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop

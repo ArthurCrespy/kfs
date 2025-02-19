@@ -61,6 +61,46 @@ int printf(const char* restrict format, ...) {
 			if (!print(str, len))
 				return -1;
 			written += len;
+		} else if (*format == 'd' || *format == 'i') {
+			format++;
+			int num = va_arg(parameters, int);
+			char num_buffer[32];
+			int pos = 0;
+			unsigned int unum;
+
+			if (num < 0) {
+				if (!maxrem) {
+					// TODO: Set errno to EOVERFLOW.
+					return -1;
+				}
+				if (!print("-", 1))
+					return -1;
+				written++;
+				maxrem--;
+				unum = (unsigned int)(-(long long)num);
+			} else {
+				unum = (unsigned int)num;
+			}
+
+			do {
+				num_buffer[pos++] = '0' + (unum % 10);
+				unum /= 10;
+			} while (unum != 0);
+
+			for (int i = 0; i < pos / 2; i++) {
+				char tmp = num_buffer[i];
+				num_buffer[i] = num_buffer[pos - i - 1];
+				num_buffer[pos - i - 1] = tmp;
+			}
+
+			if (maxrem < (size_t)pos) {
+				// TODO: Set errno to EOVERFLOW.
+				va_end(parameters);
+				return -1;
+			}
+			if (!print(num_buffer, pos))
+				return -1;
+			written += pos;
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);

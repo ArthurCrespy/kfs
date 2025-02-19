@@ -10,3 +10,4 @@ COPY srcs/kernel/arch/i386/grub.cfg /kfs/isodir/boot/grub
 RUN grub-mkrescue -o /kfs/kfs.iso --compress=xz /kfs/isodir
 
 CMD ["qemu-system-i386", "-vnc", "0.0.0.0:0", "-cdrom", "/kfs/kfs.iso"]
+#CMD ["qemu-system-i386", "-s", "-S", "-vnc", "0.0.0.0:0", "-cdrom", "/kfs/kfs.iso"]

@@ -1,3 +1,4 @@
+#include <kernel.h>
 #include "../include/kernel/kernel.h"
 #include "../include/kernel/vga.h"
 #include "../include/kernel/ports.h"
@@ -105,7 +106,15 @@ void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
 }
 
-void print_ascii_art(void){
+void kernel_main(void) 
+{
+  	terminal_init();
+    pic_init();
+	gdt_init();
+	idt_init();
+	interrupts_init();
+	keyboard_init();
+
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
 	terminal_writestring("                                 :::     :::::::: \n");
 	terminal_writestring("                               :+:     :+:    :+: \n");

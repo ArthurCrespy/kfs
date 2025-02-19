@@ -2,14 +2,7 @@
 #define _VGA_H
 
 #include <stdint.h>
-
-#define NUM_SCREEN 3
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-
-static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
-
-extern int current_screen;
+#include <stddef.h>
 
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
