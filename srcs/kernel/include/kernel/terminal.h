@@ -9,6 +9,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define NUM_SCREEN 3
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
 void terminal_setcolor(uint8_t color);
 void terminal_putchar(char c);
 void terminal_writestring(const char* data);
