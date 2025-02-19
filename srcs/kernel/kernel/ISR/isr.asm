@@ -5,15 +5,15 @@ section .text
 global isr_wrapper
 isr_wrapper:
     pushad
-    cld
+    cld							; Clear the direction flag
     call isr_handler
     popad
-    iret
+    iret						; Return from interrupt
 
 global isr_wrapper_keyboard
 isr_wrapper_keyboard:
     pushad
-    cld
+    cld							; Clear the direction flag
     call isr_handler_keyboard
     popad
-    iret
+    iret						; Return from interrupt

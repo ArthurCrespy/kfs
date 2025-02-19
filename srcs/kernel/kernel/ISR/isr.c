@@ -9,15 +9,14 @@ void isr_handler(void) {
 void isr_handler_keyboard(void) {
 	outb(PIC1_COMMAND, PIC_EOI);
 	uint8_t scancode = keyboard_encoder_read_buffer();
+	printf("OK: ISR Routine called (isr_handler_keyboard)\n");
+	printf("    IRQ 0x20 (32)\n");
+	printf("    INP: %c (%d)\n", scancode, scancode);
 
 	bool key_released = (scancode & 0x80) != 0;
 	uint8_t key_index = scancode & 0x7F;
 
 	enum KEYCODE key = _keyboard_scancode_std[key_index];
-
-	printf("OK: ISR Routine called (isr_handler_keyboard)\n");
-	printf("    IRQ 0x20 (32)\n");
-	printf("    INP: %c (%d)\n", scancode, scancode);
 
 	switch (key) {
 		case KEY_LSHIFT:
@@ -43,9 +42,12 @@ void isr_handler_keyboard(void) {
 		default:
 			if (!key_released) {
 				char ascii = keyboard_key_to_ascii(key);
-				if (ascii)
+				if (ascii) {
 					terminal_putchar(ascii);
+					printf("\n");
+				}
 			}
 		break;
 	}
+	printf("\n");
 }
