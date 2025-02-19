@@ -7,7 +7,9 @@ RUN mkdir -p /kfs/isodir/boot/grub
 COPY srcs/kernel/build/kfs.bin /kfs/isodir/boot/grub
 COPY srcs/kernel/arch/i386/grub.cfg /kfs/isodir/boot/grub
 
-RUN grub-mkrescue -o /kfs/kfs.iso --compress=xz /kfs/isodir
+RUN echo "GRUB_TIMEOUT=3" > /etc/default/grub
 
-CMD ["qemu-system-i386", "-vnc", "0.0.0.0:0", "-cdrom", "/kfs/kfs.iso"]
-#CMD ["qemu-system-i386", "-s", "-S", "-vnc", "0.0.0.0:0", "-cdrom", "/kfs/kfs.iso"]
+RUN update-grub ; grub-mkrescue -o /kfs/kfs.iso --compress=xz /kfs/isodir
+
+CMD ["qemu-system-i386", "-boot", "order=c", "-drive", "file=/kfs/kfs.iso,if=ide,media=disk", "-vnc", "0.0.0.0:0"]
+#CMD ["qemu-system-i386", "-boot", "order=c", "-drive", "file=/kfs/kfs.iso,if=ide,media=disk", "-vnc", "0.0.0.0:0", "-s", "-S"]
