@@ -1,16 +1,17 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include <stdio.h>
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include <gdt.h>
+#include <idt.h>
+#include <keyboard.h>
+#include <pic.h>
+#include <terminal.h>
+#include <vga.h>
 
-void terminal_init(void);
-void terminal_putchar(char c);
-void terminal_write(const char* data, size_t size);
-void terminal_writestring(const char* data);
+extern void interrupts_init(void);
+
+void kernel_main(void);
 
 #endif

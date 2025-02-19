@@ -9,13 +9,13 @@ global outw
 ; Return value is in EAX.
 section .text
 inb:
-    push    ebp             ; save the base pointer
-    mov     ebp, esp        ; set the base pointer to the stack pointer
+    push    ebp
+    mov     ebp, esp
     mov     dx, [ebp+8]     ; load port number from the stack into DX (temporary 16 bit register)
     in      al, dx          ; read a byte from the port specified in DX and store it to AL (AL is the lower 8 bits of AX who is the lower 16 bits of EAX)
     movzx   eax, al         ; 8 to 32 bit zero extension into EAX which is the return register
-    pop     ebp             ; restore the base pointer
-    ret                     ; return from the function
+    pop     ebp
+    ret
 
 ; inw(uint16_t port) -> uint16_t
 ; [ebp+8] = port
@@ -30,8 +30,7 @@ inw:
     ret
 
 ; outb(uint16_t port, uint8_t data)
-; [ebp+8]  = port
-; [ebp+12] = data
+; [ebp+8] = port, [ebp+12] = data
 ; Returns nothing
 outb:
     push    ebp
@@ -43,8 +42,7 @@ outb:
     ret
 
 ; outw(uint16_t port, uint16_t data)
-; [ebp+8]  = port
-; [ebp+12] = data
+; [ebp+8] = port, [ebp+12] = data
 ; Returns nothing
 outw:
     push    ebp

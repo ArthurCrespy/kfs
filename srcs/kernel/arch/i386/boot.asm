@@ -26,6 +26,11 @@ section .text
 global _start
 _start:
 	mov esp, stack_top              ; Set the esp register to point to the top of our stack
-    call kernel_main                ; Enter the high-level kernel
     cli                             ; Disable interrupts
+    call kernel_main                ; Enter the high-level kernel
     hlt                             ; Halt the CPU
+
+global interrupts_init
+interrupts_init:
+    sti                             ; Enable interrupts
+    ret

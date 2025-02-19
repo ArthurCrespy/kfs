@@ -1,8 +1,4 @@
-#include <kernel.h>
 #include <keyboard.h>
-#include <keymap.h>
-#include <idt.h>
-#include <ports.h>
 
 #define INVALID_SCANCODE 0
 
@@ -190,28 +186,11 @@ void keyboard_reset_system() {
 	keyboard_encoder_send_command(0xfe);
 }
 
-void keyboard_pic_remap(void) {
-	uint8_t a1;
-	uint8_t a2;
+#define MPIC1_CMD	0x20
+#define MPIC1_DATA	0x21
+#define SPIC1_CMD	0xA0
+#define SPIC1_DATA	0xA1
 
-	a1 = inb(0x21);
-	a2 = inb(0xA1);
-
-	outb(0x20, 0x11);
-	outb(0xA0, 0x11);
-
-	outb(0x21, 0x20);
-	outb(0xA1, 0x28);
-
-	outb(0x21, 0x04);
-	outb(0xA1, 0x02);
-
-	outb(0x21, 0x01);
-	outb(0xA1, 0x01);
-
-	outb(0x21, a1);
-	outb(0xA1, a2);
-}
 
 void keyboard_i86_irq() {
 	uint8_t scancode = keyboard_encoder_read_buffer();
@@ -221,7 +200,8 @@ void keyboard_i86_irq() {
 
 	enum KEYCODE key = _keyboard_scancode_std[key_index];
 
-	printf("OK <- C IRQ 32\n");
+	printf("OK: IRQ Routine called (kb_i86_irq)\n");
+	printf("    Scancode: %d\n", scancode);
 
 	switch (key) {
 		case KEY_LSHIFT:
@@ -258,24 +238,21 @@ void keyboard_i86_irq() {
 extern void keyboard_i86_irq_asm(void);
 
 void keyboard_init(void) {
-	keyboard_pic_remap();
-
 	setvect(0x20, keyboard_i86_irq);
 //	setvect(0x20, keyboard_i86_irq_asm);
 
 	_scancode	= INVALID_SCANCODE;
 	_numlock	= false;
-	_scrolllock = false;
+	_scrolllock	= false;
 	_capslock	= false;
 	_shift		= false;
 	_alt		= false;
 	_ctrl		= false;
 
-	if (!keyboard_self_test())
-		printf("KO <- KB Test\n");
-	else
-		printf("OK <- KB Test\n");
-
+//	if (!keyboard_self_test())
+//		printf("KO: KB Test\n");
+//	else
+//		printf("OK: KB Test\n");
 
 	keyboard_enable();
 }

@@ -1,10 +1,10 @@
 #ifndef _TESTS_H
 #define _TESTS_H
 
-#include "../../include/kernel/ports.h"
-#include "../../include/kernel/idt.h"
+#include <idt.h>
+#include <ports.h>
 
-#include "stdio.h"
+#include <stdio.h>
 
 extern void test_irq_49_asm();
 
