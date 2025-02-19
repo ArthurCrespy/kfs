@@ -11,7 +11,7 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 
-void terminal_initialize(void) 
+void terminal_init(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
@@ -100,7 +100,7 @@ void kernel_main(void)
 	gdt_init();
 	idt_init();
 
-	terminal_initialize();
+	terminal_init();
 
 	printf("KO <- ASM IRQ 49\n");
 
