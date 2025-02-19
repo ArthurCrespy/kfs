@@ -1,6 +1,8 @@
 #ifndef _IDT_H
 #define _IDT_H
 
+#include <isr.h>
+
 #include <stdint.h>
 
 struct idt_entry {

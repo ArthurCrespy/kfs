@@ -13,5 +13,8 @@ void setvect(uint8_t vector, void (*handler)(void)) {
 }
 
 void idt_init(void) {
+	setvect(0x20, isr_wrapper);
+	setvect(0x21, isr_wrapper_keyboard);
+	setvect(0x31, isr_wrapper);
 	idt_load();
 }
