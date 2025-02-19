@@ -3,6 +3,7 @@
 
 #include <idt.h>
 #include <keymap.h>
+#include <pic.h>
 #include <ports.h>
 #include <terminal.h>
 

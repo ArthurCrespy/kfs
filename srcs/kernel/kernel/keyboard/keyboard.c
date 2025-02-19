@@ -1,5 +1,4 @@
 #include <keyboard.h>
-#include <pic.h>
 
 char keyboard_key_to_ascii(enum KEYCODE code) {
 	char key = (char) code;
