@@ -3,6 +3,8 @@
 
 #include <ports.h>
 
+#define PIC_READ_IRR	0x0a
+#define PIC_READ_ISR	0x0b
 #define PIC_EOI			0x20
 
 #define PIC1			0x20
