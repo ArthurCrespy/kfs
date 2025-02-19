@@ -7,13 +7,13 @@ idt_ptr:
 
 section .bss
 global idt
-; Reserve space for the 256 IDT entries
+; Reserve space for 256 IDT entries
 idt:
 	resb 256 * 8
 
 section .text
 global idt_load
-; Load the IDT using the lidt instruction
+; Load the IDT using lidt
 idt_load:
 	lidt [idt_ptr]
 	ret
