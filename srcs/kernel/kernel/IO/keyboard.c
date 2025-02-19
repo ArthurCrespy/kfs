@@ -1,8 +1,8 @@
-#include "../../include/kernel/kernel.h"
-#include "../../include/kernel/keyboard.h"
-#include "../../include/kernel/keymap.h"
-#include "../../include/kernel/idt.h"
-#include "../../include/kernel/ports.h"
+#include <kernel.h>
+#include <keyboard.h>
+#include <keymap.h>
+#include <idt.h>
+#include <ports.h>
 
 #define INVALID_SCANCODE 0
 

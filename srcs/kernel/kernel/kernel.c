@@ -1,10 +1,11 @@
-#include "../include/kernel/kernel.h"
-#include "../include/kernel/vga.h"
-#include "../include/kernel/ports.h"
-#include "../include/kernel/keyboard.h"
-#include "../include/kernel/idt.h"
-#include "../include/kernel/gdt.h"
-#include "../include/kernel/tests.h"
+#include <kernel.h>
+#include <vga.h>
+#include <ports.h>
+#include <keyboard.h>
+#include <idt.h>
+#include <gdt.h>
+#include <pic.h>
+#include <tests.h>
 
 size_t terminal_row;
 size_t terminal_column;

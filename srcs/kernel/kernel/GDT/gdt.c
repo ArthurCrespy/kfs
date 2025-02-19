@@ -1,4 +1,4 @@
-#include "../../include/kernel/gdt.h"
+#include <gdt.h>
 
 struct gdt_entry {
 	uint16_t limit_low;		// Lower 16 bits of the segment limit

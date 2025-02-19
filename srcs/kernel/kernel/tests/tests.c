@@ -1,4 +1,4 @@
-#include "../../include/kernel/tests.h"
+#include <tests.h>
 
 void test_irq_handler(void) {
 	printf("OK <- C IRQ 49\n");

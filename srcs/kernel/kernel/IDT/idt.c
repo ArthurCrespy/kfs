@@ -1,4 +1,4 @@
-#include "../../include/kernel/idt.h"
+#include <idt.h>
 
 struct idt_entry {
 	uint16_t offset_low;	// Lower 16 bits of the handler address

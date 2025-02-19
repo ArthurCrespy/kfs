@@ -2,7 +2,7 @@ NAME            = kfs.bin
 
 CC              = i386-elf-gcc
 CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
-CPPFLAGS        = -Iinclude -I../libc/include
+CPPFLAGS        = -Iinclude/kernel -I../libc/include
 
 ASM             = nasm
 ASMFLAGS        = -f elf32 -F dwarf -g
