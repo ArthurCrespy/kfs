@@ -115,7 +115,7 @@ char keyboard_key_to_ascii(enum KEYCODE code) {
 	return 0;
 }
 
-uint8_t keyboard_controller_read_status() {
+uint8_t keyboard_controller_read_status(void) {
 	return inb(KB_CTRL_STATUS_REGISTER);
 }
 
@@ -126,7 +126,7 @@ void keyboard_controller_send_command(uint8_t cmd) {
 	outb(KB_CTRL_CMD_REGISTER, cmd);
 }
 
-uint8_t keyboard_encoder_read_buffer() {
+uint8_t keyboard_encoder_read_buffer(void) {
 	return inb(KB_ENC_INPUT_BUFFER);
 }
 
@@ -137,7 +137,7 @@ void keyboard_encoder_send_command(uint8_t cmd) {
 	outb(KB_ENC_CMD_REGISTER, cmd);
 }
 
-bool keyboard_self_test() {
+bool keyboard_self_test(void) {
 	keyboard_controller_send_command(KB_CTRL_CMD_SELF_TEST);
 	while (1)
 		if (keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_OUT_BUFFER)
@@ -145,22 +145,22 @@ bool keyboard_self_test() {
 	return (keyboard_encoder_read_buffer() == 0x55) ? true : false;
 }
 
-void keyboard_disable() {
+void keyboard_disable(void) {
 	keyboard_controller_send_command(KB_CTRL_CMD_DISABLE);
 	_keyboard_disable = true;
 }
 
-void keyboard_enable() {
+void keyboard_enable(void) {
 	keyboard_controller_send_command(KB_CTRL_CMD_ENABLE);
 	_keyboard_disable = false;
 }
 
-void keyboard_reset_system() {
+void keyboard_reset_system(void) {
 	keyboard_controller_send_command(KB_CTRL_CMD_WRITE_OUT_PORT);
 	keyboard_encoder_send_command(0xfe);
 }
 
-void keyboard_i86_irq() {
+void keyboard_i86_irq(void) {
 	uint8_t scancode = keyboard_encoder_read_buffer();
 
 	bool key_released = (scancode & 0x80) != 0;
