@@ -1,13 +1,8 @@
-; Declare the functions as global so that the linker can see them.
-global inb
-global inw
-global outb
-global outw
-
 ; inb(uint16_t port) -> uint8_t
 ; [ebp+8] = port
 ; Return value is in EAX.
 section .text
+global inb
 inb:
     push    ebp
     mov     ebp, esp
@@ -20,6 +15,7 @@ inb:
 ; inw(uint16_t port) -> uint16_t
 ; [ebp+8] = port
 ; Return value is in EAX.
+global inw
 inw:
     push    ebp
     mov     ebp, esp
@@ -32,6 +28,7 @@ inw:
 ; outb(uint16_t port, uint8_t data)
 ; [ebp+8] = port, [ebp+12] = data
 ; Returns nothing
+global outb
 outb:
     push    ebp
     mov     ebp, esp
@@ -44,6 +41,7 @@ outb:
 ; outw(uint16_t port, uint16_t data)
 ; [ebp+8] = port, [ebp+12] = data
 ; Returns nothing
+global io_wait
 outw:
     push    ebp
     mov     ebp, esp
@@ -51,4 +49,10 @@ outw:
     mov     ax, [ebp+12]    ; load the word of data from the stack into AX (AX is the 16 bit pseudo return value register)
     out     dx, ax          ; write the word in AX to the I/O port specified by DX
     pop     ebp
+    ret
+
+global io_wait
+io_wait:
+    mov     dx, 0x80
+    out     dx, al
     ret
