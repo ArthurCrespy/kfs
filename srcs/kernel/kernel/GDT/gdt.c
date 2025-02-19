@@ -5,7 +5,7 @@ struct gdt_entry {
 	uint16_t base_low;		// Lower 16 bits of the base address
 	uint8_t  base_middle;	// Next 8 bits of the base address
 	uint8_t  access;		// Access flags determine ring and segment type
-	uint8_t  granularity;	// Flags and high 4 bits of limit
+	uint8_t  flags;			// Flags and high 4 bits of limit
 	uint8_t  base_high;		// Highest 8 bits of the base address
 } __attribute__((packed));
 
@@ -17,12 +17,12 @@ struct gdt_ptr {
 // GDT array declared in assembly
 extern struct gdt_entry gdt[];
 
-void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity) {
+void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
 	gdt[index].limit_low	= (uint16_t)(limit & 0xFFFF);
 	gdt[index].base_low		= (uint16_t)(base & 0xFFFF);
 	gdt[index].base_middle	= (uint8_t)((base >> 16) & 0xFF);
 	gdt[index].access		= access;
-	gdt[index].granularity 	= (uint8_t)(((limit >> 16) & 0x0F) | (granularity & 0xF0));
+	gdt[index].flags		= (uint8_t)(((limit >> 16) & 0x0F) | (flags & 0xF0));
 	gdt[index].base_high	= (uint8_t)((base >> 24) & 0xFF);
 }
 
@@ -30,6 +30,10 @@ void gdt_init(void) {
 	setentry(0, 0, 0, 0, 0);				// 0: Null segment
 	setentry(1, 0, 0xFFFFF, 0x9A, 0xCF);	// 1: Kernel code segment
 	setentry(2, 0, 0xFFFFF, 0x92, 0xCF);	// 2: Kernel data segment
+	setentry(3, 0, 0xFFFFF, 0x96, 0xCF);	// 3: Kernel stack segment
+	setentry(4, 0, 0xFFFFF, 0xFA, 0xCF);	// 4: User code segment
+	setentry(5, 0, 0xFFFFF, 0xF2, 0xCF);	// 5: User data segment
+	setentry(6, 0, 0xFFFFF, 0xF6, 0xCF);	// 6: User stack segment
 	gdt_load();
 }
 
