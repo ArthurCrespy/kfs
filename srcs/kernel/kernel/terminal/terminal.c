@@ -22,6 +22,10 @@ void terminal_setcolor(uint8_t color) {
 	terminal_color[current_screen] = color;
 }
 
+uint8_t terminal_getcolor(void) {
+	return terminal_color[current_screen];
+}
+
 void terminal_sync_with_vga(void) {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		VGA_MEMORY[i] = terminal_buffer[current_screen][i];
@@ -63,6 +67,10 @@ void terminal_putchar(char c) {
 	if (c == '\n') {
 		terminal_column[current_screen] = 0;
 		++terminal_row[current_screen];
+        uint8_t color = terminal_getcolor();
+        terminal_setcolor(VGA_COLOR_LIGHT_GREEN);
+        terminal_writestring("kfs> ");
+        terminal_setcolor(color);
 	}
 	else {
 		terminal_putentryat(c, terminal_color[current_screen], terminal_column[current_screen], terminal_row[current_screen]);
@@ -100,4 +108,7 @@ void terminal_init(void) {
 			}
 		}
 	}
+    terminal_setcolor(VGA_COLOR_LIGHT_GREEN);
+    terminal_writestring("kfs> ");
+    terminal_setcolor(VGA_COLOR_WHITE);
 }

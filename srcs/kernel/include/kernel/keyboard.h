@@ -5,6 +5,7 @@
 #include <keymap.h>
 #include <pic.h>
 #include <ports.h>
+#include <shell.h>
 #include <terminal.h>
 
 #include <ctype.h>

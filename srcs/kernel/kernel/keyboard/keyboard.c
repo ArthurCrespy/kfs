@@ -73,10 +73,21 @@ void keyboard_read(void) {
 	else if (_win && !key_released)
 		modifier = '#';
 
-	if (!key_released && (key >= 0x1201 && key <= 0x120e)) {
-		terminal_load_screen(key - 0x1201);
+	if (!key_released && (key >= KEY_F1 && key <= KEY_F10)) {
+		terminal_load_screen(key - KEY_F1);
 		return ;
-    }
+	}
+
+	if (key == KEY_BACKSPACE) {
+		// terminal_delchar(1);
+		shell_buffer_remove(1);
+		return ;
+	}
+
+	if (!key_released && key == KEY_RETURN) {
+		shell_exec();
+		return ;
+	}
 
 	switch (key) {
 		case KEY_LSHIFT:
@@ -111,6 +122,7 @@ void keyboard_read(void) {
 					if (modifier)
 						terminal_putchar(modifier);
 					terminal_putchar(ascii);
+					shell_buffer_add(ascii);
 				}
 			}
 		break;

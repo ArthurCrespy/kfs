@@ -17,6 +17,7 @@ void terminal_load_screen(int new_screen);
 void terminal_setcolor(uint8_t color);
 void terminal_putchar(char c);
 void terminal_writestring(const char* data);
+void terminal_delchar(int i);
 void terminal_init(void);
 
 #endif
