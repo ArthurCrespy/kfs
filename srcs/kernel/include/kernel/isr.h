@@ -4,7 +4,6 @@
 #include <keyboard.h>
 #include <pic.h>
 #include <ports.h>
-#include <tests.h>
 
 #include <stdio.h>
 

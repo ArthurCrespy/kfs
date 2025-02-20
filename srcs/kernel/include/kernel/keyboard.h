@@ -152,6 +152,7 @@ static bool _capslock	= false;
 static bool _shift		= false;
 static bool _alt		= false;
 static bool _ctrl		= false;
+static bool _win		= false;
 
 // static int _keyboard_error = 0;
 // static bool _keyboard_bat_res = false;
@@ -167,6 +168,7 @@ bool keyboard_self_test(void);
 void keyboard_disable(void);
 void keyboard_enable(void);
 void keyboard_reset_system(void);
+void keyboard_read(void);
 void keyboard_init(void);
 
 #endif

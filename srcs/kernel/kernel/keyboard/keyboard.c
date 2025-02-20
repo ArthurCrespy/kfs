@@ -58,6 +58,65 @@ void keyboard_reset_system(void) {
 	keyboard_encoder_send_command(0xFE);
 }
 
+void keyboard_read(void) {
+	uint8_t scancode = keyboard_encoder_read_buffer();
+	bool key_released = (scancode & 0x80) != 0;
+	uint8_t key_index = scancode & 0x7F;
+	enum KEYCODE key = _keyboard_scancode_std[key_index];
+
+	char modifier = 0;
+
+	if (_ctrl && !key_released)
+		modifier = '^';
+	else if (_alt && !key_released)
+		modifier = '@';
+	else if (_win && !key_released)
+		modifier = '#';
+
+	if (!key_released && (key >= 0x1201 && key <= 0x120e)) {
+		terminal_load_screen(key - 0x1201);
+		return ;
+    }
+
+	switch (key) {
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+			_shift = !key_released;
+		break;
+
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+			_ctrl = !key_released;
+		break;
+
+		case KEY_LALT:
+		case KEY_RALT:
+			_alt = !key_released;
+		break;
+
+		case KEY_LWIN:
+		case KEY_RWIN:
+			_win = !key_released;
+		break;
+
+		case KEY_CAPSLOCK:
+			if (!key_released)
+				_capslock = !_capslock;
+		break;
+
+		default:
+			if (!key_released) {
+				char ascii = keyboard_key_to_ascii(key);
+				if (ascii) {
+					if (modifier)
+						terminal_putchar(modifier);
+					terminal_putchar(ascii);
+				}
+			}
+		break;
+	}
+}
+
 void keyboard_init(void) {
 	_scancode	= INVALID_SCANCODE;
 	_numlock	= false;
