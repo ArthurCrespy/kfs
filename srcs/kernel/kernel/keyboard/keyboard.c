@@ -1,38 +1,25 @@
 #include <keyboard.h>
 
-char keyboard_key_to_ascii(enum KEYCODE code) {
-	char key = (char) code;
-
-	if (isascii(key) && isprint(key)) {
-		if ((_shift && !_capslock) || (!_shift && _capslock)) {
-			if (key >= 97 && key <= 122)
-				key -= 32;
-		}
-		return key;
-	}
-	return 0;
-}
-
 uint8_t keyboard_controller_read_status(void) {
-	return inb(KB_CTRL_STATUS_REGISTER);
+	return inb(KB_CTRL_STATUS_PORT);
 }
 
 void keyboard_controller_send_command(uint8_t cmd) {
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
 			break;
-	outb(KB_CTRL_CMD_REGISTER, cmd);
+	outb(KB_CTRL_CMD_PORT, cmd);
 }
 
 uint8_t keyboard_encoder_read_buffer(void) {
-	return inb(KB_ENC_INPUT_BUFFER);
+	return inb(KB_ENC_INPUT_PORT);
 }
 
 void keyboard_encoder_send_command(uint8_t cmd) {
 	while (1)
 		if ((keyboard_controller_read_status() & KB_CTRL_STATUS_MASK_IN_BUFFER) == 0)
 			break;
-	outb(KB_ENC_CMD_REGISTER, cmd);
+	outb(KB_ENC_CMD_PORT, cmd);
 }
 
 bool keyboard_self_test(void) {
@@ -55,7 +42,20 @@ void keyboard_enable(void) {
 
 void keyboard_reset_system(void) {
 	keyboard_controller_send_command(KB_CTRL_CMD_WRITE_OUT_PORT);
-	keyboard_encoder_send_command(0xFE);
+	keyboard_encoder_send_command(KB_CTRL_CMD_RESET);
+}
+
+char keyboard_key_to_ascii(enum KEYCODE code) {
+	char key = (char) code;
+
+	if (isascii(key) && isprint(key)) {
+		if ((_shift && !_capslock) || (!_shift && _capslock)) {
+			if (key >= 97 && key <= 122)
+				key -= 32;
+		}
+		return key;
+	}
+	return 0;
 }
 
 void keyboard_read(void) {
@@ -131,5 +131,5 @@ void keyboard_init(void) {
 //	else
 //		printf("OK: KB Test\n");
 
-	outb(PIC1_DATA, 0xFD);
+	outb(PIC1_DATA, 0xF9);
 }
