@@ -19,7 +19,7 @@ The GDT defines segments. Each segment has:
 - A 32-bit base address (where it starts in memory)
 - A 20-bit segment limit (how large it is)
 - An 8-bit access byte (describe the segment type and privilege level)
-- 4 bits of flags (granularity, operant size, etc.)
+- 4 bits of flags (granularity, operand size, etc.)
 
 Here's a typical segment layout: 
 
@@ -47,7 +47,7 @@ The access byte layout is defined as follows:
 | Bit | Name                             | Description |
 | --- | ---------------------------------| ----------- |
 |  7  | P (Present)                      | Must be 1 for valid segments. 0 means the segment is not present (causes a fault) |
-| 6-5 | DPS (Descriptor Privilege Level) | 00 = Ring 0 (kernel), 11 = Ring 3 (user mode) |
+| 6-5 | DPL (Descriptor Privilege Level) | 00 = Ring 0 (kernel), 11 = Ring 3 (user mode) |
 |  4  | S (Descriptor type)              | 1 = Code/Data segment, 0 = System segment (like TSS, LDT) |
 |  3  | E (Executable)                   | 1 = Code segment, 0 = Data segment |
 |  2  | DC (Direction / Conforming)      | Data segments: 1 = grows down, 0 = grows up. Code segments: 1 = conforming, 0 = non-conforming |
