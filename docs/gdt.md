@@ -73,7 +73,7 @@ The flag byte layout is defined as follows:
 
 ### GDT entry structure
 
-A GDT descriptor (or GDT entry) is an 8-byte (64-bit) structure that describes a segment. Each entry in the GDT represents one segment. *Even though i386 is a 32-bit architecture, each GDT entry is 64 bits. This is possible thanks to special hidden registers inside the processor called Segment Descriptor Caches (also known as hidden descriptor registers). In our case, we'll be using the `lgdt` instruction used to load the GDT into a special CPU register called GDTR (GDT Register). This is a special register that stores the base address and size of the GDT.*
+A GDT descriptor (or GDT entry) is an 8-byte (64-bit) structure that describes a segment. Each entry in the GDT represents one segment. *Even though i386 is a 32-bit architecture, each GDT entry is 64 bits. This is possible thanks to special hidden registers inside the processor called Segment Descriptor Caches (also known as hidden descriptor registers). In our case, we'll be using the `lgdt` instruction used to load the GDT into a special CPU register called GDTR (GDT Register). This is a special register that stores the base address and size of the GDT (48-bit register, not 64-bit).*
 
  
 	struct gdt_entry {
