@@ -45,6 +45,15 @@ void terminal_delete_last_line(void) {
 	}
 }
 
+void terminal_delete_last_char(void) {
+	if (terminal_column[current_screen] == 0)
+		return ;
+	terminal_column[current_screen]--;
+	terminal_putentryat(' ', terminal_color[current_screen], terminal_column[current_screen], terminal_row[current_screen]);
+	terminal_update_cursor();
+	terminal_sync_with_vga();
+}
+
 void terminal_scroll(void) {
 	uint16_t *vga = terminal_buffer[current_screen];
 
