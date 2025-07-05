@@ -1,6 +1,6 @@
 # KFS series
 
-![alt text](image.png)
+![alt text](docs/kfs.png)
 
 The purpose of this project is to write a kernel from scratch (hence the acronym) without any existing software, API or such, using the i386 architecture.
 

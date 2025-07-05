@@ -2,13 +2,13 @@
 .idea/
 
 build/
+objs/
 isodir/
 
 kfs.bin
 kfs.iso
 
-
-objs/
 cross-compiler/
+!cross-compiler/install.sh
 
 keyboard_example/
