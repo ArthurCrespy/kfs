@@ -7,9 +7,8 @@ isodir/
 kfs.bin
 kfs.iso
 
-cross-compiler/*
-!cross-compiler/tools
 
 objs/
+cross-compiler/
 
 keyboard_example/
