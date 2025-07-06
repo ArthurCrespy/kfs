@@ -1,8 +1,8 @@
-NAME            = kfs.bin
+NAME            = kfs
 
 CC              = i386-elf-gcc
-CFLAGS          = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
-CFLAGS_CUSTOM   = -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding
+CFLAGS          = -fno-builtin -fno-stack-protector -nostdlib -ffreestanding -g
+CFLAGS_CUSTOM   = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
 CPPFLAGS        = -Iinclude/kernel -I../libc/include
 
 ASM             = nasm
@@ -12,9 +12,10 @@ LIBK            = ../libc/build/libk.a
 DISASM		  	= ndisasm
 DISASMFLAGS	  	= -b 32
 
-LD              = i386-elf-gcc
-LD_CUSTOM       = i386-elf-ld
+LD              = i386-elf-ld
+LD_CUSTOM       = i386-elf-gcc
 LDFLAGS         = -T arch/i386/linker.ld
+LDFLAGS_CUSTOM  = -T arch/i386/linker.ld
 
 RM              = rm -rf
 
@@ -30,16 +31,16 @@ KERNEL_OBJS     := $(patsubst %.asm, $(OBJS_DIR)/%.asm.o, $(KERNEL_SRCS))
 BOOT_OBJS       := $(patsubst arch/%.asm, $(OBJS_DIR)/arch/%.asm.o, $(BOOT_SRCS))
 OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
 
-all: $(BUILD_DIR) $(OBJS_DIR) $(NAME)
+all: $(BUILD_DIR) $(OBJS_DIR) $(NAME).elf
 
-custom: $(BUILD_DIR) $(OBJS_DIR) $(NAME)_ld
+all-gcc: $(BUILD_DIR) $(OBJS_DIR) $(NAME).gcc.elf
 
-$(NAME): $(OBJS) $(LIBK)
-	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS)
+$(NAME).elf: $(OBJS) $(LIBK)
+	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK)
 	$(DISASM) $(DISASMFLAGS) $(BUILD_DIR)/$(NAME) > $(BUILD_DIR)/$(NAME).disasm
 
-$(NAME)_ld: $(OBJS) $(LIBK)
-	$(LD_CUSTOM) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS_CUSTOM)
+$(NAME).gcc.elf: $(OBJS) $(LIBK)
+	$(LD_CUSTOM) $(LDFLAGS_CUSTOM) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS_CUSTOM)
 	$(DISASM) $(DISASMFLAGS) $(BUILD_DIR)/$(NAME) > $(BUILD_DIR)/$(NAME).disasm
 
 $(OBJS_DIR)/%.c.o: %.c
