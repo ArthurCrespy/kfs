@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-struct idt_entry {
+struct gate_descriptor {
 	uint16_t offset_low;	// Lower 16 bits of the handler address
 	uint16_t selector;		// Kernel code segment selector
 	uint8_t  zero;			// Must be zero
@@ -13,15 +13,15 @@ struct idt_entry {
 	uint16_t offset_high;	// Upper 16 bits of the handler address
 } __attribute__((packed));
 
-struct idt_ptr {
+struct idtr {
 	uint16_t limit;			// Limit (size of IDT - 1)
 	uint32_t base;			// Base address of the IDT
 } __attribute__((packed));
 
-extern void idt_ptr(void);
+extern void idtr(void);
 extern void idt_load(void);
 
-void setvect(uint8_t vector, void (*handler)(void));
+void setvect(uint8_t vector, uint16_t selector, uint8_t type_attr, void (*handler)(void));
 void idt_init(void);
 
 #endif

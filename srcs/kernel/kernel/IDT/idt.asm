@@ -1,7 +1,7 @@
 section .data
 global idt_ptr
 ; IDT pointer structure
-idt_ptr:
+idtr:
 	dw 256 * 8 - 1
 	dd idt
 
@@ -15,5 +15,5 @@ section .text
 global idt_load
 ; Load the IDT using lidt
 idt_load:
-	lidt [idt_ptr]
+	lidt [idtr]
 	ret

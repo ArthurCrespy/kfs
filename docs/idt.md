@@ -50,7 +50,7 @@ An IDT entry is an 8-byte (64-bit) structure that stores information about the i
 
 ### IDT entry structure
 
-	struct idt_entry {
+	struct gate_descriptor {
 		uint16_t offset_low;      // Lower 16 bits of the handler address
 		uint16_t selector;        // Kernel code segment selector
 		uint8_t  zero;            // Must be zero
@@ -62,7 +62,7 @@ Defines an IDT entry.
 
 ### IDT pointer structure
 
-	struct idt_ptr {
+	struct idtr {
 		uint16_t limit;  // Limit (size of IDT - 1)
 		uint32_t base;   // Base address of the IDT
 	} __attribute__((packed));
@@ -77,7 +77,7 @@ The IDT pointer structure manages the base address of the IDT and its size.
 	section .data
 	global idt_ptr
 	; IDT pointer structure
-	idt_ptr:
+	idtr:
 		dw 256 * 8 - 1      ; Size of IDT (256 entries * 8 bytes) - 1
 		dd idt              ; Base address of the IDT
 
@@ -95,21 +95,19 @@ This is where the space for the 256 entries of the IDT is reserved, each entry t
 	global idt_load
 	; Load the IDT using lidt
 	idt_load:
-		lidt [idt_ptr]      ; Load the IDT using the 'lidt' instruction
+		lidt [idtr]      ; Load the IDT using the 'lidt' instruction
 		ret
 
-`idt_load` loads the IDT with `lidt` using the information in the `idt_ptr` structure. This allows the CPU to start using the IDT for interrupt handling. `lidt` is similar to [`lgdt`](gdt.md#gdt-entry-structure), and will load the IDT into the IDTR (IDT Register).
+`idt_load` loads the IDT with `lidt` using the information in the `idtr` structure. This allows the CPU to start using the IDT for interrupt handling. `lidt` is similar to [`lgdt`](gdt.md#gdt-entry-structure), and will load the IDT into the IDTR (IDT Register).
 
 ### Setting interrupt vector
 
 	void setvect(uint8_t vector, void (*handler)(void)) {
-		uint32_t handler_addr = (uint32_t) handler;
-
-		idt[vector].offset_low    = handler_addr & 0xFFFF;
-		idt[vector].selector      = 0x08;
-		idt[vector].zero          = 0;
-		idt[vector].type_attr     = 0x8E;
-		idt[vector].offset_high   = (handler_addr >> 16) & 0xFFFF;
+        idt[vector].offset_low	= (uint16_t)((uint32_t)handler & 0xFFFF);
+        idt[vector].selector	= selector;
+        idt[vector].zero		= 0x00;
+        idt[vector].type_attr	= type_attr;
+        idt[vector].offset_high	= (uint16_t)(((uint32_t)handler >> 16) & 0xFFFF);
 	}
 
 `setvect` is used to set an interrupt vector in the IDT.
