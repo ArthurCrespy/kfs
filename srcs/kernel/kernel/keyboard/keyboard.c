@@ -47,7 +47,10 @@ void keyboard_reset_system(void) {
 
 char keyboard_key_to_ascii(enum KEYCODE code) {
 	char key = (char) code;
-
+	if (key == KEY_BACKSPACE)
+		terminal_delete_last_char();
+	if (key == KEY_RETURN)
+		terminal_putchar('\n');
 	if (isascii(key) && isprint(key)) {
 		if ((_shift && !_capslock) || (!_shift && _capslock)) {
 			if (key >= 97 && key <= 122)
