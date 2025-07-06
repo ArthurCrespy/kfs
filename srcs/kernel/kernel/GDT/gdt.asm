@@ -16,13 +16,13 @@ global gdt_load
 ; Load the GDT using lgdt
 gdt_load:
     lgdt [gdt_ptr]
-    jmp 0x08:.load  ; 1: Code segment
+    jmp 0x08:.load  ; 1: Kernel code segment
 .load:
     mov ax, 0x10
-    mov ds, ax      ; 2: Data segment
-    mov es, ax      ; 2: Data destination segment
-    mov fs, ax      ; 2: Data TLS segment
-    mov gs, ax      ; 2: Data extra segment
+    mov ds, ax      ; 2: Kernel data segment
+    mov es, ax      ; 2: Kernel data destination segment
+    mov fs, ax      ; 2: Kernel data TLS segment
+    mov gs, ax      ; 2: Kernel data extra segment
     mov ax, 0x18
-    mov ss, ax      ; 3: Stack segment
+    mov ss, ax      ; 4: User code segment
     ret
