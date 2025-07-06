@@ -75,15 +75,14 @@ The flag byte layout is defined as follows:
 
 A GDT descriptor (or GDT entry) is an 8-byte (64-bit) structure that describes a segment. Each entry in the GDT represents one segment. *Even though i386 is a 32-bit architecture, each GDT entry is 64 bits. This is possible thanks to special hidden registers inside the processor called Segment Descriptor Caches (also known as hidden descriptor registers). In our case, we'll be using the `lgdt` instruction used to load the GDT into a special CPU register called GDTR (GDT Register). This is a special register that stores the base address and size of the GDT (48-bit register, not 64-bit).*
 
- 
-	struct gdt_entry {
-		uint16_t limit_low;   // Lower 16 bits of the segment limit
-		uint16_t base_low;    // Lower 16 bits of the base address
-		uint8_t  base_middle; // Next 8 bits of the base address
-		uint8_t  access;      // Access flags determine ring and segment type
-		uint8_t  flags;       // Flags and high 4 bits of limit
-		uint8_t  base_high;   // Highest 8 bits of the base address
-	} __attribute__((packed));
+    struct segment_descriptor {
+        uint16_t limit_low;		// Lower 16 bits of the segment limit
+        uint16_t base_low;	    // Lower 16 bits of the base address
+        uint8_t  base_middle;	// Next 8 bits of the base address
+        uint8_t  access;		// Access flags determine ring and segment type
+        uint8_t  flags;			// Flags and high 4 bits of limit
+        uint8_t  base_high;		// Highest 8 bits of the base address
+    } __attribute__((packed));
 
 Defines a GDT descriptor.
 
@@ -119,12 +118,12 @@ This structure is passed to the `lgdt` instruction.
 ### GDT pointer
 
 	section .data
-	global gdt_ptr
-	gdt_ptr:
+	global gdtr
+	gdtr:
 		dw 7 * 8 - 1   ; Size of GDT (7 entries, each 8 bytes) - 1
 		dd gdt         ; Base address of the GDT
 
-Defines gdt_ptr, which stores:
+Defines gdtr, which stores:
 
 - Limit (`dw 7*8 -1`): Size of GDT in bytes (56 bytes - 1)
 - Base address (`dd gdt`): Points to the gdt in memory
@@ -143,7 +142,7 @@ Allocates 56 bytes (7 entries * 8 bytes) for the GDT
 	section .text
 	global gdt_load
 	gdt_load:
-		lgdt [gdt_ptr]      ; Load GDT descriptor (limit and base)
+		lgdt [gdtr]         ; Load GDT descriptor (limit and base)
 		jmp 0x08:.load      ; Far jump to refresh CS (Code Segment)
 	.load:
 		mov ax, 0x10        ; Load new Data Segment (0x10 = Kernel Data Segment)
@@ -155,7 +154,7 @@ Allocates 56 bytes (7 entries * 8 bytes) for the GDT
 		mov ss, ax
 		ret
 
-- `lgdt [gdt_ptr]` loads the GDT with the gdt_ptr structure into the CPU
+- `lgdt [gdtr]` loads the GDT with the gdt_ptr structure into the CPU
 - `jmp 0x08:.load`: far jump to load the new CS
 - Sets segment registers (ds, es, fd, gs, ss)
 

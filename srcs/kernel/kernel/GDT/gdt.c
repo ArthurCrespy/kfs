@@ -1,6 +1,6 @@
 #include <gdt.h>
 
-extern struct gdt_entry gdt[];
+extern struct segment_descriptor gdt[];
 
 void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
 	gdt[index].limit_low	= (uint16_t)(limit & 0xFFFF);

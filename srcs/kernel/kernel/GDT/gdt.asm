@@ -1,11 +1,11 @@
-section .data
-global gdt_ptr
+section .gdtr
+global gdtr
 ; GDT pointer structure
-gdt_ptr:
+gdtr:
     dw 7 * 8 - 1
     dd gdt
 
-section .bss
+section .gdt
 global gdt
 ; Reserve space for GDT entries
 gdt:
@@ -15,14 +15,14 @@ section .text
 global gdt_load
 ; Load the GDT using lgdt
 gdt_load:
-    lgdt [gdt_ptr]
-    jmp 0x08:.load  ; 1: Kernel code segment
+    lgdt [gdtr]
+    jmp 0x08:.load  ; Ring 0: (1 << 3) | 0
 .load:
-    mov ax, 0x10
-    mov ds, ax      ; 2: Kernel data segment
-    mov es, ax      ; 2: Kernel data destination segment
-    mov fs, ax      ; 2: Kernel data TLS segment
-    mov gs, ax      ; 2: Kernel data extra segment
-    mov ax, 0x18
-    mov ss, ax      ; 4: User code segment
+    mov ax, 0x10    ; Ring 0: (2 << 3) | 0
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ax, 0x18    ; Ring 0: (3 << 3) | 0
+    mov ss, ax
     ret
