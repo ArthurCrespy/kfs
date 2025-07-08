@@ -1,8 +1,4 @@
-#include <limits.h>
-#include <stdbool.h>
-#include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
@@ -82,10 +78,10 @@ int printf(const char* restrict format, ...) {
 				unum = (unsigned int)num;
 			}
 
-			do {
+			while (unum != 0) {
 				num_buffer[pos++] = '0' + (unum % 10);
 				unum /= 10;
-			} while (unum != 0);
+			}
 
 			for (int i = 0; i < pos / 2; i++) {
 				char tmp = num_buffer[i];
