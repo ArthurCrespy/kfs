@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 int printf(const char* __restrict format, ...);
+int printk(const char* __restrict format, ...);
 int putchar(int);
 
 #ifdef __cplusplus
