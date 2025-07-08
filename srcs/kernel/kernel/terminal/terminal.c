@@ -110,3 +110,13 @@ void terminal_init(void) {
 		}
 	}
 }
+
+void terminal_42(void) {
+	printf("                                 :::     :::::::: \n");
+	printf("                               :+:     :+:    :+: \n");
+	printf("                             +:+ +:+        +:+   \n");
+	printf("                           +#+  +:+      +#+      \n");
+	printf("                         +#+#+#+#+#+  +#+         \n");
+	printf("                              #+#   #+#           \n");
+	printf("                             ###  ##########      \n");
+}
