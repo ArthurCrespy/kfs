@@ -9,14 +9,14 @@ SECTIONS
     /* 0x0400–0x07FF : BIOS Data Area (BDA) */
     /* 0x0800–0x0FFF : Other low level stuff (GDT, emergency IDT, bootstrap allocator, etc..) */
     . = 0x0800;
-    .gdtr ALIGN(8) :
-    {
-        *(.gdtr)
-    }
-
     .gdt ALIGN(8) :
     {
         *(.gdt)
+    }
+
+    .gdtr ALIGN(8) :
+    {
+        *(.gdtr)
     }
 
     /* Go to 2MiB offset for the kernel image */
