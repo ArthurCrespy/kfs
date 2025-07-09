@@ -48,16 +48,16 @@ int printk(const char* restrict format, ...) {
 					return -1;
 				}
 				if (addr == 0) {
-					if (maxrem < 5) {
+					if (maxrem < 4) {
 						// TODO: Set errno to EOVERFLOW.
 						return -1;
 					}
-					if (!print("(nil)", 5))
+					if (!print("0x00000000", 10))
 						return -1;
 					written += 5;
 					continue;
 				}
-				char buf[64];
+				char buf[11];
 				size_t len = sizeof(buf);
 				buf[--len] = '\0';
 				while (addr != 0 && len > 0) {
@@ -68,11 +68,13 @@ int printk(const char* restrict format, ...) {
 						buf[--len] = 'a' + i - 10;
 					addr >>= 4;
 				}
-				char *hexstr = &buf[len];
-				len = strlen(hexstr) + strlen("0x");
+				while (len > 2)
+					buf[--len] = '0';
+				buf[--len] = 'x';
+				buf[--len] = '0';
 				if (maxrem < len)
 					return -1;
-				if (!print("0x", strlen("0x")) || !print(hexstr, strlen(hexstr)))
+				if (!print(buf, strlen(buf)))
 					return -1;
 				written += len;
 			}
