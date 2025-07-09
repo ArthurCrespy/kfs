@@ -1,6 +1,7 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
+#include <builtins.h>
 #include <gdt.h>
 #include <idt.h>
 #include <irq.h>

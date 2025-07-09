@@ -10,12 +10,13 @@ void kernel_main(void)
 	keyboard_init();
 
 	terminal_setcolor(VGA_COLOR_LIGHT_BLUE);
-	terminal_42();
+	print_42();
 
 	terminal_setcolor(VGA_COLOR_GREEN);
 	printf("\n\nHello world, 42 kernel!\n\n");
 
 	terminal_setcolor(VGA_COLOR_WHITE);
+	print_stack(128);
 
 	for(;;)
 		asm("hlt");
