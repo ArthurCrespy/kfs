@@ -1,10 +1,13 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+#if defined(__is_libk)
+#include <terminal.h>
+#endif
 
 __attribute__((__noreturn__))
 void abort(void) {
 #if defined(__is_libk)
-  	#include <kernel.h>
 	terminal_writestring("kernel: panic: abort()\n");
 #else
 	printf("abort()\n");
