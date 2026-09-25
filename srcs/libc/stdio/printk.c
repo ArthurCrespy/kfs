@@ -15,79 +15,94 @@ int printk(const char* restrict format, ...) {
 	int written = 0;
 
 	while (*format != '\0') {
-		size_t maxrem = INT_MAX - written;
+		size_t maxrem = (size_t) (INT_MAX - written);
 
 		if (format[0] != '%' || format[1] == '%') {
 			if (format[0] == '%')
 				format++;
-			size_t amount = 1;
-			while (format[amount] && format[amount] != '%')
-				amount++;
-			if (maxrem < amount) {
+			size_t pos = 1;
+			while (format[pos] && format[pos] != '%')
+				pos++;
+			if (maxrem < pos) {
 				// TODO: Set errno to EOVERFLOW.
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(format, amount))
-				return -1;
-			format += amount;
-			written += amount;
+			if (!print(format, pos)) {
+				written = -1;
+				break;
+			}
+			format += pos;
+			written += (int)pos;
 			continue;
 		}
 
 		const char* format_begun_at = format++;
 
 		if (*format == 'p') {
+			unsigned long addr = va_arg(parameters, unsigned long); // TODO: change to uniptr_t when stdint.h
 			format++;
 			if (*format == 's') {
 				format++;
 				// TODO: Implement kallsyms_lookup logic
 			} else {
-				unsigned long addr = va_arg(parameters, unsigned long);
 				if (!maxrem) {
 					// TODO: Set errno to EOVERFLOW.
-					return -1;
+					written = -1;
+					break;
 				}
 				if (addr == 0) {
-					if (maxrem < 4) {
+					if (maxrem < 10) {
 						// TODO: Set errno to EOVERFLOW.
-						return -1;
+						written = -1;
+						break;
 					}
-					if (!print("0x00000000", 10))
-						return -1;
-					written += 5;
+					if (!print("0x00000000", 10)) {
+						written = -1;
+						break;
+					}
+					written += 10;
 					continue;
 				}
 				char buf[11];
 				size_t len = sizeof(buf);
 				buf[--len] = '\0';
-				while (addr != 0 && len > 0) {
+				while (addr != 0 && len > 2) { // TODO: make this x86-64 proof
 					int i = addr & 0xF;
 					if (i < 10)
-						buf[--len] = '0' + i;
+						buf[--len] = (char)('0' + i);
 					else
-						buf[--len] = 'a' + i - 10;
+						buf[--len] = (char)('a' + i - 10);
 					addr >>= 4;
 				}
 				while (len > 2)
 					buf[--len] = '0';
 				buf[--len] = 'x';
 				buf[--len] = '0';
-				if (maxrem < len)
-					return -1;
-				if (!print(buf, strlen(buf)))
-					return -1;
-				written += len;
+				if (maxrem < strlen(buf)) {
+					// TODO: Set errno to EOVERFLOW.
+					written = -1;
+					break;
+				}
+				if (!print(buf, strlen(buf))) {
+					written = -1;
+					break;
+				}
+				written += (int)strlen(buf);
 			}
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);
 			if (maxrem < len) {
 				// TODO: Set errno to EOVERFLOW.
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(format, len))
-				return -1;
-			written += len;
+			if (!print(format, len)) {
+				written = -1;
+				break;
+			}
+			written += (int)len;
 			format += len;
 		}
 	}

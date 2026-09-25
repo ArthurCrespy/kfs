@@ -15,98 +15,141 @@ int printf(const char* restrict format, ...) {
 	int written = 0;
 
 	while (*format != '\0') {
-		size_t maxrem = INT_MAX - written;
+		size_t maxrem = (size_t) (INT_MAX - written);
 
 		if (format[0] != '%' || format[1] == '%') {
 			if (format[0] == '%')
 				format++;
-			size_t amount = 1;
-			while (format[amount] && format[amount] != '%')
-				amount++;
-			if (maxrem < amount) {
+			size_t pos = 1;
+			while (format[pos] && format[pos] != '%')
+				pos++;
+			if (maxrem < pos) {
 				// TODO: Set errno to EOVERFLOW.
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(format, amount))
-				return -1;
-			format += amount;
-			written += amount;
+			if (!print(format, pos)) {
+				written = -1;
+				break;
+			}
+			format += pos;
+			written += (int)pos;
 			continue;
 		}
 
 		const char* format_begun_at = format++;
 
 		if (*format == 'c') {
-			format++;
 			char c = (char) va_arg(parameters, int);
 			if (!maxrem) {
 				// TODO: Set errno to EOVERFLOW.
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(&c, sizeof(c)))
-				return -1;
+			if (!print(&c, sizeof(c))) {
+				written = -1;
+				break;
+			}
 			written++;
-		} else if (*format == 's') {
 			format++;
-			const char* str = va_arg(parameters, const char*);
-			size_t len = strlen(str);
-			if (maxrem < len) {
-				// TODO: Set errno to EOVERFLOW.
-				return -1;
-			}
-			if (!print(str, len))
-				return -1;
-			written += len;
-		} else if (*format == 'd' || *format == 'i') {
-			format++;
+		} else if (*format == 'd' || *format == 'i' || *format == 'x' || *format == 'X') {
 			int num = va_arg(parameters, int);
 			char num_buffer[32];
-			int pos = 0;
+			size_t pos = 0;
 			unsigned int unum;
 
-			if (num < 0) {
+			if (num == 0) {
 				if (!maxrem) {
 					// TODO: Set errno to EOVERFLOW.
-					return -1;
+					written = -1;
+					break;
 				}
-				if (!print("-", 1))
-					return -1;
+				if (!print("0", 1)) {
+					written = -1;
+					break;
+				}
+				written++;
+			}
+
+			if (num < 0 && (*format == 'd' || *format == 'i')) {
+				if (!maxrem) {
+					// TODO: Set errno to EOVERFLOW.
+					written = -1;
+					break;
+				}
+				if (!print("-", 1)) {
+					written = -1;
+					break;
+				}
 				written++;
 				maxrem--;
-				unum = (unsigned int)(-(long long)num);
+				unum = (unsigned int)-(long long)num;
 			} else {
 				unum = (unsigned int)num;
 			}
 
-			while (unum != 0) {
-				num_buffer[pos++] = '0' + (unum % 10);
+			while (unum != 0 && (*format == 'd' || *format == 'i')) {
+				num_buffer[pos++] = (char) ('0' + unum % 10);
 				unum /= 10;
 			}
 
-			for (int i = 0; i < pos / 2; i++) {
+			while (unum != 0 && (*format == 'x' || *format == 'X')) {
+				size_t i = unum % 16;
+				if (i < 10)
+					num_buffer[pos++] = (char) ('0' + i);
+				else if (*format == 'x')
+					num_buffer[pos++] = (char) ('a' + i - 10);
+				else if (*format == 'X')
+					num_buffer[pos++] = (char) ('A' + i - 10);
+				unum /= 16;
+			}
+
+			for (size_t i = 0; i < pos / 2; i++) {
 				char tmp = num_buffer[i];
 				num_buffer[i] = num_buffer[pos - i - 1];
 				num_buffer[pos - i - 1] = tmp;
 			}
 
-			if (maxrem < (size_t)pos) {
+			if (maxrem < pos) {
 				// TODO: Set errno to EOVERFLOW.
-				va_end(parameters);
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(num_buffer, pos))
-				return -1;
-			written += pos;
+			if (!print(num_buffer, pos)) {
+				written = -1;
+				break;
+			}
+			written += (int)pos;
+			format++;
+		} else if (*format == 's') {
+			const char* str = va_arg(parameters, const char*);
+			size_t len = strlen(str);
+
+			if (maxrem < len) {
+				// TODO: Set errno to EOVERFLOW.
+				written = -1;
+				break;
+			}
+			if (!print(str, len)) {
+				written = -1;
+				break;
+			}
+			written += (int)len;
+			format++;
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);
+
 			if (maxrem < len) {
 				// TODO: Set errno to EOVERFLOW.
-				return -1;
+				written = -1;
+				break;
 			}
-			if (!print(format, len))
-				return -1;
-			written += len;
+			if (!print(format, len)) {
+				written = -1;
+				break;
+			}
+			written += (int)len;
 			format += len;
 		}
 	}
