@@ -1,5 +1,19 @@
 #include <keyboard.h>
 
+// static int _keyboard_error		= 0;
+// static bool _keyboard_bat_res	= false;
+// static bool _keyboard_diag_res	= false;
+// static bool _keyboard_resend_res	= false;
+static bool _keyboard_disable		= true;
+
+static bool _numlock	= false;
+static bool _scrolllock	= false;
+static bool _capslock	= false;
+static bool _shift		= false;
+static bool _alt		= false;
+static bool _ctrl		= false;
+static bool _win		= false;
+
 uint8_t keyboard_controller_read_status(void) {
 	return inb(KB_CTRL_STATUS_PORT);
 }
@@ -121,13 +135,6 @@ void keyboard_read(void) {
 }
 
 void keyboard_init(void) {
-	_scancode	= INVALID_SCANCODE;
-	_numlock	= false;
-	_scrolllock	= false;
-	_capslock	= false;
-	_shift		= false;
-	_alt		= false;
-	_ctrl		= false;
 
 //	if (!keyboard_self_test())
 //		printf("KO: KB Test\n");

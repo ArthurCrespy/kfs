@@ -1,14 +1,7 @@
 #ifndef _KEYBOARD_H
 #define _KEYBOARD_H
 
-#include <idt.h>
 #include <keymap.h>
-#include <pic.h>
-#include <ports.h>
-#include <terminal.h>
-
-#include <ctype.h>
-#include <stdio.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -143,22 +136,6 @@ static int _keyboard_scancode_std [] = {
 	KEY_F11,
 	KEY_F12
 };
-
-static char _scancode = INVALID_SCANCODE;
-
-static bool _numlock	= false;
-static bool _scrolllock	= false;
-static bool _capslock	= false;
-static bool _shift		= false;
-static bool _alt		= false;
-static bool _ctrl		= false;
-static bool _win		= false;
-
-// static int _keyboard_error = 0;
-// static bool _keyboard_bat_res = false;
-// static bool _keyboard_diag_res = false;
-// static bool _keyboard_resend_res = false;
-static bool _keyboard_disable = true;
 
 extern void isr_handler_keyboard_asm(void);
 
