@@ -26,6 +26,7 @@ int print_stack(size_t size) {
 }
 
 void print_42(void) {
+	printf("\n");
 	printf("                                 :::     :::::::: \n");
 	printf("                               :+:     :+:    :+: \n");
 	printf("                             +:+ +:+        +:+   \n");
