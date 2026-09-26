@@ -23,16 +23,16 @@ image: kernel stop
 	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
 
 run: image
-	docker run --rm -d --name $(DOCKER_NAME) --platform $(DOCKER_PLATFORM) -e QEMU_FLAGS="$(QEMU_FLAGS)" \
-		-p $(NOVNC_PORT):5800 -p $(VNC_PORT):5900 -p $(GDB_PORT):1234 $(DOCKER_IMAGE)
-	@for i in $$(seq 1 20); do curl -fs -o /dev/null http://localhost:$(NOVNC_PORT) && exit 0; sleep 0.5; done; \
-	echo "noVNC unreachable on port $(NOVNC_PORT)"; exit 1
+	docker run --rm -d --name $(DOCKER_IMAGE) --platform $(DOCKER_PLATFORM) -e QEMU_FLAGS="$(QEMU_FLAGS)" \
+		-p $(DOCKER_NOVNC):5800 -p $(DOCKER_VNC):5900 -p $(DOCKER_GDB):1234 $(DOCKER_IMAGE)
+	@for i in $$(seq 1 20); do curl -fs -o /dev/null http://localhost:$(DOCKER_NOVNC) && exit 0; sleep 0.5; done; \
+	echo "noVNC unreachable on port $(DOCKER_NOVNC)"; exit 1
 
 vnc: run
-	$(OPEN) "http://localhost:$(NOVNC_PORT)/vnc.html?autoconnect=true&resize=scale"
+	$(OPEN) "http://localhost:$(DOCKER_NOVNC)/vnc.html?autoconnect=true&resize=scale"
 
 stop:
-	@docker rm -f $(DOCKER_NAME) > /dev/null 2>&1 || true
+	@docker rm -f $(DOCKER_IMAGE) > /dev/null 2>&1 || true
 
 clean:
 	$(MAKE) -C $(KERNEL_DIR) clean
