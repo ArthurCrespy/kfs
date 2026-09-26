@@ -1,66 +1,69 @@
 NAME            = kfs
+.DEFAULT_GOAL   = all
 
 CC              = i386-elf-gcc
-CFLAGS          = -fno-builtin -fno-stack-protector -nostdlib -ffreestanding -g
-CFLAGS_CUSTOM   = -Wall -Wextra -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -g
-CPPFLAGS        = -Iinclude/kernel -I../libc/include
+CFLAGS          = -std=gnu11 -Wall -Wextra -Wconversion -fno-builtin -fno-stack-protector -ffreestanding -g
+CPPFLAGS        = -Iinclude/kernel -I../libc/include -MMD -MP
 
 ASM             = nasm
-ASMFLAGS        = -f elf32 -F dwarf -g
-LIBK            = ../libc/build/libk.a
+ASMFLAGS        = -w+all -f elf32 -F dwarf -MP -g
 
 DISASM		  	= ndisasm
 DISASMFLAGS	  	= -b 32
 
 LD              = i386-elf-ld
-LD_CUSTOM       = i386-elf-gcc
 LDFLAGS         = -T arch/i386/linker.ld
-LDFLAGS_CUSTOM  = -T arch/i386/linker.ld
 
 RM              = rm -rf
 
-C_SRCS          := $(shell find kernel -type f -name '*.c')
-KERNEL_SRCS     := $(shell find kernel -type f -name '*.asm')
-BOOT_SRCS		:= $(shell find arch -type f -name '*.asm')
-ASM_SRCS        := $(KERNEL_SRCS) $(BOOT_SRCS)
-
 BUILD_DIR       = build
-OBJS_DIR        = $(BUILD_DIR)/objs
-C_OBJS          := $(patsubst %.c, $(OBJS_DIR)/%.c.o, $(C_SRCS))
-KERNEL_OBJS     := $(patsubst %.asm, $(OBJS_DIR)/%.asm.o, $(KERNEL_SRCS))
-BOOT_OBJS       := $(patsubst arch/%.asm, $(OBJS_DIR)/arch/%.asm.o, $(BOOT_SRCS))
-OBJS            = $(C_OBJS) $(KERNEL_OBJS) $(BOOT_OBJS)
+OBJS_DIR        := $(BUILD_DIR)/objs
+LIBC_DIR        = ../libc
 
-all: $(BUILD_DIR) $(OBJS_DIR) $(NAME).elf
+C_SRCS          := $(shell find kernel -type f -name '*.c')
+ASM_SRCS        := $(shell find kernel arch -type f -name '*.asm')
 
-all-gcc: $(BUILD_DIR) $(OBJS_DIR) $(NAME).gcc.elf
+C_OBJS          := $(C_SRCS:%.c=$(OBJS_DIR)/%.c.o)
+ASM_OBJS        := $(ASM_SRCS:%.asm=$(OBJS_DIR)/%.asm.o)
 
-$(NAME).elf: $(OBJS) $(LIBK)
-	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK)
-	$(DISASM) $(DISASMFLAGS) $(BUILD_DIR)/$(NAME) > $(BUILD_DIR)/$(NAME).disasm
+OBJS            := $(C_OBJS) $(ASM_OBJS)
+DEPS            := $(OBJS:.o=.d)
+-include $(DEPS)
 
-$(NAME).gcc.elf: $(OBJS) $(LIBK)
-	$(LD_CUSTOM) $(LDFLAGS_CUSTOM) -o $(BUILD_DIR)/$(NAME) $(OBJS) $(LIBK) $(CFLAGS_CUSTOM)
-	$(DISASM) $(DISASMFLAGS) $(BUILD_DIR)/$(NAME) > $(BUILD_DIR)/$(NAME).disasm
+LIBK            := $(LIBC_DIR)/build/libk.a
+
+ELF             := $(BUILD_DIR)/$(NAME).elf
+
+all: $(ELF)
+
+$(LIBK): FORCE
+	$(MAKE) -C $(LIBC_DIR)
+
+$(ELF): $(OBJS) $(LIBK)
+	@mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+	$(DISASM) $(DISASMFLAGS) $@ > $@.disasm
 
 $(OBJS_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 $(OBJS_DIR)/%.asm.o: %.asm
 	@mkdir -p $(dir $@)
-	$(ASM) $(ASMFLAGS) $< -o $@
-
-$(BUILD_DIR) $(OBJS_DIR):
-	mkdir -p $@
+	$(ASM) $< -o $@ $(ASMFLAGS) -MD $(@:.o=.d)
 
 clean:
+	$(MAKE) -C $(LIBC_DIR) clean
 	$(RM) $(OBJS_DIR)
-	$(RM) $(BUILD_DIR)/$(NAME).disasm
+	$(RM) $(ELF).disasm
 
 fclean: clean
+	$(MAKE) -C $(LIBC_DIR) fclean
 	$(RM) $(BUILD_DIR)
 
-re: fclean all
+re: fclean
+	$(MAKE) all
+
+FORCE:
 
 .PHONY: all clean fclean re

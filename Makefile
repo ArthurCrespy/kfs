@@ -1,47 +1,53 @@
-MAKE_DIR		= srcs
+export PATH     := $(CURDIR)/cross-compiler/kfs/bin:$(PATH)
+OPEN            := $(shell command -v xdg-open || echo open)
+
+KERNEL_DIR      = srcs/kernel
 
 DOCKER_IMAGE    = kfs
-DOCKER_PORT     = 8888
+DOCKER_PLATFORM = linux/amd64
+DOCKER_NOVNC	= 5800
+DOCKER_VNC		= 5900
 DOCKER_GDB      = 1234
 
-all: kernel docker
+QEMU_FLAGS		?=
 
-all-gcc: kernel-gcc docker
+all: vnc
 
-docker:
-	docker build -t $(DOCKER_IMAGE) .
-	docker run --rm -d -p $(DOCKER_PORT):5900 -p $(DOCKER_GDB):1234 $(DOCKER_IMAGE)
-	sleep 0.1
-	vncviewer 0.0.0.0:$(DOCKER_PORT)
-	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
+debug: QEMU_FLAGS += -S
+debug: all
 
-libk:
-	$(MAKE) -C $(MAKE_DIR)/libc
+kernel:
+	$(MAKE) -C $(KERNEL_DIR)
 
-kernel: libk
-	$(MAKE) -C $(MAKE_DIR)/kernel
+image: kernel stop
+	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
 
-kernel-gcc: libk
-	$(MAKE) -C $(MAKE_DIR)/kernel all-gcc
+run: image
+	docker run --rm -d --name $(DOCKER_NAME) --platform $(DOCKER_PLATFORM) -e QEMU_FLAGS="$(QEMU_FLAGS)" \
+		-p $(NOVNC_PORT):5800 -p $(VNC_PORT):5900 -p $(GDB_PORT):1234 $(DOCKER_IMAGE)
+	@for i in $$(seq 1 20); do curl -fs -o /dev/null http://localhost:$(NOVNC_PORT) && exit 0; sleep 0.5; done; \
+	echo "noVNC unreachable on port $(NOVNC_PORT)"; exit 1
+
+vnc: run
+	$(OPEN) "http://localhost:$(NOVNC_PORT)/vnc.html?autoconnect=true&resize=scale"
+
+stop:
+	@docker rm -f $(DOCKER_NAME) > /dev/null 2>&1 || true
 
 clean:
-	$(MAKE) -C $(MAKE_DIR)/libc clean
-	$(MAKE) -C $(MAKE_DIR)/kernel clean
+	$(MAKE) -C $(KERNEL_DIR) clean
 
-clean_container:
-	docker ps -aq --filter "ancestor=$(DOCKER_IMAGE)" | xargs -r docker stop
+fclean: stop
+	$(MAKE) -C $(KERNEL_DIR) fclean
 
-fclean: clean_container
-	$(MAKE) -C $(MAKE_DIR)/libc fclean
-	$(MAKE) -C $(MAKE_DIR)/kernel fclean
+re: fclean
+	$(MAKE) all
 
-re: fclean all
+.PHONY: all debug kernel image run vnc stop clean fclean re
 
-.PHONY: all libk kernel clean fclean re clean_container
-
-# Test if multiboot is valid :
-# if grub-file --is-x86-multiboot myos.bin; then
-#	echo multiboot confirmed
+# How to test if multiboot is valid (requires grub-file) :
+# if grub-file --is-x86-multiboot kfs.bin; then
+#	echo "multiboot confirmed"
 # else
-#	echo the file is not multiboot
+#	echo "multiboot unconfirmed"; exit 1
 # fi
