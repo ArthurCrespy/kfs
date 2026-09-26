@@ -1,17 +1,17 @@
 // ----- IDT STACK ----- //
 
-// IDT section:
-// 0x203018:       0x00000000      0x00000000      0x00000000      0x00000000
-// 0x203028:       0x00000000      0x00000000      0x00000000      0x00000000
-// [...]
-// 0x203118: {offset_low = 2160, selector = 8, zero = 0 '\000', type_attr = 142 '\216', offset_high = 32}
-// 0x203118: 0x70 0x08 0x08 0x00 0x00 0x8e 0x20 0x00
-//          |   0x0870| select. | 0 | typ |   0x0020|
+// |                                       | Gate descriptor                                                                       | Resolved handler                  |
+// | description      | vector | address   | offset high | type_attr P DP S Type | zero | selector IIIIIIIIIIIII T RP | offset low | offset     | handler              |
+// | Empty (unset)    | 0-31   | 0x203018+ | 0x0000      | 0x00      0 00 0 0000 | 0x00 | 0x0000   0000000000000 0 00 | 0x0000     | 0x00000000 | -                    |
+// | Keyboard IRQ     | 32     | 0x203118  | 0x0020      | 0x8E      1 00 0 1110 | 0x00 | 0x0008   0000000000001 0 00 | 0x0870     | 0x00200870 | keyboard_irq_wrapper |
+// |                                       |             | uint8_t type_attr     |      | GDT index 1 = Kernel Code   |            |
 
-// symbols table:
-// 0x200870 <keyboard_irq_wrapper>
+// Raw bytes @ 0x203118 (memory order = offset low, selector, zero, type_attr, offset high):
+// | 0x70 0x08 | 0x08 0x00 | 0x00 | 0x8E | 0x20 0x00 |
+// |    0x0870 |    0x0008 | zero | type |    0x0020 |
+
+// type_attr 0x8E = P=1 (present), DPL=00 (ring 0), S=0 (system), Type=1110 (32-bit interrupt gate)
 
 // summary:
 // IDT is allocated correctly by idt_load()
 // Interruption handler is set correctly by setvect()
-// I think the issue is from the GDT because the kernel is not able to load the selector 0x08 from it

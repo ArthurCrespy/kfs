@@ -10,6 +10,6 @@
 // | User Data       | 5     | 0x2B     0000000000101 0 11 | 0x00      | 0xC   1 1 0 0 | 0xF        | 0xF2   1 11 1 0 0 1 0 | 0x00     | 0x0000   | 0xFFFF    |
 // | User Stack      | 6     | 0x33     0000000000110 0 11 | 0x00      | 0xC   1 1 0 0 | 0xF        | 0xF2   1 11 1 0 0 1 0 | 0x00     | 0x0000   | 0xFFFF    |
 // |                                                                   | uint8_t flags in gdt[]     |                                                         |
-//
+
 // For TSS (Null/Kernel Code/Kernel Data/User Code/User Data/TSS):
 // | TSS             | 5     | 0x28     0000000000101 0 00 | &tss      | 0x0   0 0 0 0 | 0x0        | 0x89   1 00 0 1 0 0 1 | &tss     | &tss     | 0x67      |
