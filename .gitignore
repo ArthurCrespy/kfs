@@ -9,6 +9,7 @@ kfs.bin
 kfs.iso
 
 cross-compiler/
+!cross-compiler/clion.sh
 !cross-compiler/install.sh
 
 keyboard_example/
