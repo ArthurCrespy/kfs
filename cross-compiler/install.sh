@@ -24,7 +24,6 @@ FLEX_BASEURL="https://github.com/westes/flex/releases/download/v$FLEX_VERSION/$F
 TEXINFO_VERSION=7.2
 TEXINFO_FILENAME="texinfo-$TEXINFO_VERSION.tar.xz"
 TEXINFO_BASEURL="https://ftp.gnu.org/gnu/texinfo/$TEXINFO_FILENAME"
-
 GCC_VERSION=13.3.0 # < 14.2.0 needs meson
 GCC_FILENAME="gcc-$GCC_VERSION.tar.xz"
 GCC_BASEURL="https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/$GCC_FILENAME"
@@ -46,14 +45,17 @@ else
 	REBUILD=0
 fi
 
+export PATH="$PREFIX_DIR/bin:$PATH"
+
 if [[ "$(uname)" == "Linux" ]]; then
 	MAKE_JOBS="$(nproc)"
 elif [[ "$(uname)" == "Darwin" ]]; then
-	MAKE_JOBS="$(sysctl -n hw.physicalcpu)"
+	MAKE_JOBS="$(sysctl -n hw.ncpu)"
+	ZLIB_SDK="--with-system-zlib" # > Xcode 16.3 breaks bundled zlib (fdopen macro)
 fi
 
 # GMP
-if [[ -d "$BUILD_DIR/$GMP_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$GMP_FILENAME" ]]; then
 	echo "GMP already downloaded."
 else
 	wget -c "$GMP_BASEURL" -O "$BUILD_DIR/$GMP_FILENAME"
@@ -70,13 +72,13 @@ fi
 mkdir -p "$BUILD_DIR/gmp-$GMP_VERSION/build"
 cd "$BUILD_DIR/gmp-$GMP_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --prefix="$PREFIX_DIR" --enable-cxx
+	../configure CC="cc -std=gnu11" --prefix="$PREFIX_DIR" --enable-cxx --disable-shared
 fi
 make -j"$MAKE_JOBS"
 make install
 
 # MPFR
-if [[ -d "$BUILD_DIR/$MPFR_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$MPFR_FILENAME" ]]; then
 	echo "MPFR already downloaded."
 else
 	wget -c "$MPFR_BASEURL" -O "$BUILD_DIR/$MPFR_FILENAME"
@@ -93,13 +95,13 @@ fi
 mkdir -p "$BUILD_DIR/mpfr-$MPFR_VERSION/build"
 cd "$BUILD_DIR/mpfr-$MPFR_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR"
+	../configure --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR" --disable-shared
 fi
 make -j"$MAKE_JOBS"
 make install
 
 # MPC
-if [[ -d "$BUILD_DIR/$MPC_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$MPC_FILENAME" ]]; then
 	echo "MPC already downloaded."
 else
 	wget -c "$MPC_BASEURL" -O "$BUILD_DIR/$MPC_FILENAME"
@@ -116,13 +118,13 @@ fi
 mkdir -p "$BUILD_DIR/mpc-$MPC_VERSION/build"
 cd "$BUILD_DIR/mpc-$MPC_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR" --with-mpfr="$PREFIX_DIR"
+	../configure --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR" --with-mpfr="$PREFIX_DIR" --disable-shared
 fi
 make -j"$MAKE_JOBS"
 make install
 
 # ISL
-if [[ -d "$BUILD_DIR/$ISL_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$ISL_FILENAME" ]]; then
 	echo "ISL already downloaded."
 else
 	wget -c "$ISL_BASEURL" -O "$BUILD_DIR/$ISL_FILENAME"
@@ -139,13 +141,13 @@ fi
 mkdir -p "$BUILD_DIR/isl-$ISL_VERSION/build"
 cd "$BUILD_DIR/isl-$ISL_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --prefix="$PREFIX_DIR"
+	 ../configure --prefix="$PREFIX_DIR" --with-gmp-prefix="$PREFIX_DIR" --disable-shared
 fi
 make -j"$MAKE_JOBS"
 make install
 
 # Bison
-if [[ -d "$BUILD_DIR/$BISON_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$BISON_FILENAME" ]]; then
 	echo "Bison already downloaded."
 else
 	wget -c "$BISON_BASEURL" -O "$BUILD_DIR/$BISON_FILENAME"
@@ -168,7 +170,7 @@ make -j"$MAKE_JOBS"
 make install
 
 # Flex
-if [[ -d "$BUILD_DIR/$FLEX_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$FLEX_FILENAME" ]]; then
 	echo "Flex already downloaded."
 else
 	wget -c "$FLEX_BASEURL" -O "$BUILD_DIR/$FLEX_FILENAME"
@@ -191,7 +193,7 @@ make -j"$MAKE_JOBS"
 make install
 
 # Texinfo
-if [[ -d "$BUILD_DIR/$TEXINFO_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$TEXINFO_FILENAME" ]]; then
 	echo "Texinfo already downloaded."
 else
 	wget -c "$TEXINFO_BASEURL" -O "$BUILD_DIR/$TEXINFO_FILENAME"
@@ -214,7 +216,7 @@ make -j"$MAKE_JOBS"
 make install
 
 # Binutils
-if [[ -d "$BUILD_DIR/$BINUTILS_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$BINUTILS_FILENAME" ]]; then
 	echo "Binutils already downloaded."
 else
 	wget -c "$BINUTILS_BASEURL" -O "$BUILD_DIR/$BINUTILS_FILENAME"
@@ -231,13 +233,13 @@ fi
 mkdir -p "$BUILD_DIR/binutils-$BINUTILS_VERSION/build"
 cd "$BUILD_DIR/binutils-$BINUTILS_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --target="$TARGET" --prefix="$PREFIX_DIR" --with-sysroot --disable-nls --disable-werror
+	../configure --target="$TARGET" --prefix="$PREFIX_DIR" --with-sysroot --disable-nls --disable-werror $ZLIB_SDK
 fi
 make -j"$MAKE_JOBS"
 make install
 
 # GDB
-if [[ -d "$BUILD_DIR/$GDB_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$GDB_FILENAME" ]]; then
 	echo "GDB already downloaded."
 else
 	wget -c "$GDB_BASEURL" -O "$BUILD_DIR/$GDB_FILENAME"
@@ -254,13 +256,14 @@ fi
 mkdir -p "$BUILD_DIR/gdb-$GDB_VERSION/build"
 cd "$BUILD_DIR/gdb-$GDB_VERSION/build" || exit 1
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
-	../configure --target="$TARGET" --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR" --with-mpfr="$PREFIX_DIR" --disable-werror
+	../configure --target="$TARGET" --prefix="$PREFIX_DIR" --with-gmp="$PREFIX_DIR" --with-mpfr="$PREFIX_DIR" \
+		--disable-werror $ZLIB_SDK
 fi
 make -j"$MAKE_JOBS" all-gdb
 make install-gdb
 
 # GCC
-if [[ -d "$BUILD_DIR/$GCC_FILENAME" ]]; then
+if [[ -f "$BUILD_DIR/$GCC_FILENAME" ]]; then
 	echo "GCC already downloaded."
 else
 	wget -c "$GCC_BASEURL" -O "$BUILD_DIR/$GCC_FILENAME"
@@ -276,18 +279,17 @@ if [ "$EXISTING" = "1" ] && [ "$REBUILD" = "1" ]; then
 fi
 mkdir -p "$BUILD_DIR/gcc-$GCC_VERSION/build"
 cd "$BUILD_DIR/gcc-$GCC_VERSION/build" || exit 1
-export PATH="$PREFIX_DIR/bin:$PATH"
 which -- "$TARGET-as" || { echo "$TARGET-as is not in PATH"; exit 1; }
 if [ "$EXISTING" = "0" ] || [ "$REBUILD" = "1" ]; then
 	../configure --target="$TARGET" --prefix="$PREFIX_DIR" \
 		--with-gmp="$PREFIX_DIR" --with-mpfr="$PREFIX_DIR" --with-mpc="$PREFIX_DIR" --with-isl="$PREFIX_DIR" \
-		--enable-languages=c,c++ --disable-nls --without-headers --disable-hosted-libstdcxx
+		--enable-languages=c,c++ --disable-nls --without-headers --disable-hosted-libstdcxx $ZLIB_SDK
 fi
 make -j"$MAKE_JOBS" all-gcc all-target-libgcc all-target-libstdc++-v3
 make install-gcc install-target-libgcc install-target-libstdc++-v3
 
-if which -- "$TARGET-gcc" &>/dev/null; then
-    echo -e "\n# KFS cross-compiler toolchain\nexport PATH=\"\$PATH:$PREFIX_DIR/bin\"" >> ~/.zshprofile
+if which -- "$TARGET-gcc" &>/dev/null && ! grep -q "KFS cross-compiler toolchain" ~/.zprofile; then
+    echo -e "\n# KFS cross-compiler toolchain\nexport PATH=\"\$PATH:$PREFIX_DIR/bin\"" >> ~/.zprofile
 fi
 
 echo "Cross-compiler toolchain for $TARGET installed successfully in:\n$PREFIX_DIR."
