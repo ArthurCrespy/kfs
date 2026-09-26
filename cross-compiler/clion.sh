@@ -71,7 +71,6 @@ import_configs() {
 	native_run_config "all"
 	native_run_config "debug"
 	remote_run_config "debug"
-	remote_run_config "debug-gcc"
 }
 
 clean_configs() {
