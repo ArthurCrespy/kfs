@@ -1,0 +1,14 @@
+display_library: sdl2
+
+megs: 32
+ata0-master: type=cdrom, path=/kfs/kfs.iso, status=inserted
+boot: cdrom
+
+clock: sync=realtime
+cpu: reset_on_triple_fault=0
+
+log: -
+panic: action=report
+error: action=report
+info: action=report
+debug: action=ignore

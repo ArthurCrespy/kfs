@@ -9,7 +9,10 @@ DOCKER_NOVNC	= 5800
 DOCKER_VNC		= 5900
 DOCKER_GDB      = 1234
 
+EMU             ?= bochs
+
 QEMU_FLAGS		?=
+BOCHS_FLAGS		?=
 
 all: vnc
 
@@ -23,8 +26,9 @@ image: kernel stop
 	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
 
 run: image
-	docker run --rm -d --name $(DOCKER_IMAGE) --platform $(DOCKER_PLATFORM) -e QEMU_FLAGS="$(QEMU_FLAGS)" \
-		-p $(DOCKER_NOVNC):5800 -p $(DOCKER_VNC):5900 -p $(DOCKER_GDB):1234 $(DOCKER_IMAGE)
+	@docker run -d --rm --name $(DOCKER_IMAGE) --platform $(DOCKER_PLATFORM) \
+		-p $(DOCKER_NOVNC):5800 -p $(DOCKER_VNC):5900 -p $(DOCKER_GDB):1234 \
+		-e QEMU_FLAGS="$(QEMU_FLAGS)" -e EMU="$(EMU)" $(DOCKER_IMAGE)
 	@for i in $$(seq 1 20); do curl -fs -o /dev/null http://localhost:$(DOCKER_NOVNC) && exit 0; sleep 0.5; done; \
 	echo "noVNC unreachable on port $(DOCKER_NOVNC)"; exit 1
 
