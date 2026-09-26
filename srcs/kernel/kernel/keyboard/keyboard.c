@@ -1,4 +1,7 @@
 #include <keyboard.h>
+#include <pic.h>
+#include <terminal.h>
+#include <ctype.h>
 
 // static int _keyboard_error		= 0;
 // static bool _keyboard_bat_res	= false;
@@ -90,8 +93,8 @@ void keyboard_read(void) {
 	else if (_win && !key_released)
 		modifier = '#';
 
-	if (!key_released && (key >= 0x1201 && key <= 0x120e)) {
-		terminal_load_screen(key - 0x1201);
+	if (!key_released && key >= 0x1201 && key <= 0x120e) {
+		terminal_load_screen((int) key - 0x1201);
 		return ;
     }
 
