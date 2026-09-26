@@ -6,6 +6,6 @@
 #include <stdint.h>
 
 void print_42(void);
-void print_stack(size_t size);
+void print_stack(void);
 
 #endif

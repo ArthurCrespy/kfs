@@ -17,8 +17,10 @@ align 4
 ; This allocates room for a small stack
 section .bss
 align 16
+global stack_bottom
 stack_bottom:
 resb 16384
+global stack_top
 stack_top:
 
 ; Declare _start as a function symbol with the given symbol size
