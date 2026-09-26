@@ -20,7 +20,7 @@ struct gdtr {
 extern void gdtr(void);
 extern void gdt_load(void);
 
-void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags);
+void setentry(int index, uint32_t base, uint8_t flags, uint32_t limit, uint8_t access);
 void gdt_init(void);
 
 #endif

@@ -1,15 +1,15 @@
-section .gdtr
-global gdtr
-; GDT pointer structure
-gdtr:
-    dw 7 * 8 - 1
-    dd gdt
-
 section .gdt
 global gdt
 ; Reserve space for GDT entries
 gdt:
     resb 7 * 8
+
+section .data
+global gdtr
+; GDT pointer structure
+gdtr:
+	dw 7 * 8 - 1
+	dd gdt
 
 section .text
 global gdt_load

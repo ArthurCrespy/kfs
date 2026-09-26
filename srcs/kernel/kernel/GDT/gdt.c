@@ -2,7 +2,7 @@
 
 extern struct segment_descriptor gdt[];
 
-void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+void setentry(int index, uint32_t base, uint8_t flags, uint32_t limit, uint8_t access) {
 	gdt[index].limit_low	= (uint16_t)(limit & 0xFFFF);
 	gdt[index].base_low		= (uint16_t)(base & 0xFFFF);
 	gdt[index].base_middle	= (uint8_t)((base >> 16) & 0xFF);
@@ -13,11 +13,11 @@ void setentry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t 
 
 void gdt_init(void) {
 	setentry(0, 0, 0, 0, 0);				// 0: Null segment
-	setentry(1, 0, 0xFFFFF, 0x9A, 0xCF);	// 1: Kernel code segment
-	setentry(2, 0, 0xFFFFF, 0x92, 0xCF);	// 2: Kernel data segment
-	setentry(3, 0, 0xFFFFF, 0x96, 0xCF);	// 3: Kernel stack segment
-	setentry(4, 0, 0xFFFFF, 0xFA, 0xCF);	// 4: User code segment
-	setentry(5, 0, 0xFFFFF, 0xF2, 0xCF);	// 5: User data segment
-	setentry(6, 0, 0xFFFFF, 0xF6, 0xCF);	// 6: User stack segment
+	setentry(1, 0, 0xCF, 0xFFFFF, 0x9A);	// 1: Kernel code segment
+	setentry(2, 0, 0xCF, 0xFFFFF, 0x92);	// 2: Kernel data segment
+	setentry(3, 0, 0xCF, 0xFFFFF, 0x92);	// 3: Kernel stack segment
+	setentry(4, 0, 0xCF, 0xFFFFF, 0xFA);	// 4: User code segment
+	setentry(5, 0, 0xCF, 0xFFFFF, 0xF2);	// 5: User data segment
+	setentry(6, 0, 0xCF, 0xFFFFF, 0xF2);	// 6: User stack segment
 	gdt_load();
 }
