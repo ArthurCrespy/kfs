@@ -3,7 +3,7 @@ extern kernel_main
 ; Declare constants for the multiboot header
 MBALIGN  equ  1 << 0                ; modules aligned on page boundaries (4096 bytes)   ; 1 << 0 = 00000001 << 0 = 00000001
 MEMINFO  equ  1 << 1                ; memory map provided with ‘mem_*’ fields           ; 1 << 1 = 00000001 << 1 = 00000010
-MBFLAGS  equ  MBALIGN | MEMINFO     ; multiboot flag field                              ; MBALIGN OR MBALIGN     = 00000011
+MBFLAGS  equ  MBALIGN | MEMINFO     ; multiboot flag field                              ; MBALIGN OR MEMINFO     = 00000011
 MAGIC    equ  0x1BADB002            ; magic number lets bootloader find the header
 CHECKSUM equ -(MAGIC + MBFLAGS)     ; checksum of above values to tell this is mb       ; inverse of the sum of MAGIC and MBFLAGS
 
